@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="last-modified" content="2016-07-19 12:35:47 +0200">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="search-domain" value="/swc-releases/2016.06/shell-novice">
+    <link rel="stylesheet" type="text/css" href="/swc-releases/2016.06/shell-novice/assets/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/swc-releases/2016.06/shell-novice/assets/css/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="/swc-releases/2016.06/shell-novice/assets/css/lesson.css" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon-swc.ico" />
+    
+    
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+    <title>The Unix Shell: Working With Files and Directories</title>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      
+      
+      <a href="https://software-carpentry.org" class="pull-left">
+        <img class="navbar-logo" src="/swc-releases/2016.06/shell-novice/assets/img/swc-icon-blue.svg" alt="Software Carpentry logo" />
+      </a>
+      
+
+      
+      <a class="navbar-brand" href="/swc-releases/2016.06/shell-novice/">Home</a>
+
+    </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+
+	
+        <li><a href="/swc-releases/2016.06/shell-novice/conduct/">Code of Conduct</a></li>
+
+	
+        
+        <li><a href="/swc-releases/2016.06/shell-novice/setup/">Setup</a></li>
+        <li><a href="/swc-releases/2016.06/shell-novice/reference/">Reference</a></li>
+        <li class="dropdown">
+          <a href="/swc-releases/2016.06/shell-novice/" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Episodes <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            
+            <li><a href="/swc-releases/2016.06/shell-novice/01-intro/">Introducing the Shell</a></li>
+            
+            <li><a href="/swc-releases/2016.06/shell-novice/02-filedir/">Navigating Files and Directories</a></li>
+            
+            <li><a href="/swc-releases/2016.06/shell-novice/03-create/">Working With Files and Directories</a></li>
+            
+            <li><a href="/swc-releases/2016.06/shell-novice/04-pipefilter/">Pipes and Filters</a></li>
+            
+            <li><a href="/swc-releases/2016.06/shell-novice/05-loop/">Loops</a></li>
+            
+            <li><a href="/swc-releases/2016.06/shell-novice/06-script/">Shell Scripts</a></li>
+            
+            <li><a href="/swc-releases/2016.06/shell-novice/07-find/">Finding Things</a></li>
+            
+          </ul>
+        </li>
+	
+
+	
+	
+        <li class="dropdown">
+          <a href="/swc-releases/2016.06/shell-novice/" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Extras <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            
+            <li><a href="/swc-releases/2016.06/shell-novice/about/">About</a></li>
+            
+            <li><a href="/swc-releases/2016.06/shell-novice/discuss/">Discussion</a></li>
+            
+            <li><a href="/swc-releases/2016.06/shell-novice/figures/">Figures</a></li>
+            
+            <li><a href="/swc-releases/2016.06/shell-novice/guide/">Instructor's Guide</a></li>
+            
+          </ul>
+        </li>
+	
+
+	
+        <li><a href="/swc-releases/2016.06/shell-novice/license/">License</a></li>
+      </ul>
+      <form class="navbar-form navbar-right" role="search" id="search" onsubmit="google_search(); return false;">
+        <div class="form-group">
+          <input type="text" id="google-search" placeholder="Search...">
+        </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+
+
+
+
+<div class="row">
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="/swc-releases/2016.06/shell-novice/02-filedir/"><span class="glyphicon glyphicon-menu-left"></span></a>
+      
+    </h3>
+  </div>
+  <div class="col-md-10">
+    <h3 class="maintitle"><a href="/swc-releases/2016.06/shell-novice/">The Unix Shell</a></h3>
+    <h1 class="maintitle">Working With Files and Directories</h1>
+  </div>
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="/swc-releases/2016.06/shell-novice/04-pipefilter/"><span class="glyphicon glyphicon-menu-right"></span></a>
+      
+    </h3>
+  </div>
+</div>
+
+
+<blockquote class="objectives">
+  <h2>Overview</h2>
+
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Teaching:</strong> 15 min
+      </br>
+      <strong>Exercises:</strong> 0 min
+    </div>
+    <div class="col-md-9">
+      <strong>Questions</strong>
+      <ul>
+	
+	<li><p>How can I create, copy, and delete files and directories?</p>
+</li>
+	
+	<li><p>How can I edit files?</p>
+</li>
+	
+      </ul>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-9">
+      <strong>Objectives</strong>
+      <ul>
+	
+	<li><p>Create a directory hierarchy that matches a given diagram.</p>
+</li>
+	
+	<li><p>Create files in that hierarchy using an editor or by copying and renaming existing files.</p>
+</li>
+	
+	<li><p>Display the contents of a directory using the command line.</p>
+</li>
+	
+	<li><p>Delete specified files and/or directories.</p>
+</li>
+	
+      </ul>
+    </div>
+  </div>
+  
+</blockquote>
+
+<p>We now know how to explore files and directories,
+but how do we create them in the first place?
+Let’s go back to our <code class="highlighter-rouge">data-shell</code> directory on the Desktop
+and use <code class="highlighter-rouge">ls -F</code> to see what it contains:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ pwd
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>/Users/nelle/Desktop/data-shell
+</code></pre>
+</div>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls -F
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>creatures/  molecules/           pizza.cfg
+data/       north-pacific-gyre/  solar.pdf
+Desktop/    notes.txt            writing/
+</code></pre>
+</div>
+
+<p>Let’s create a new directory called <code class="highlighter-rouge">thesis</code> using the command <code class="highlighter-rouge">mkdir thesis</code>
+(which has no output):</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ mkdir thesis
+</code></pre>
+</div>
+
+<p>As you might guess from its name,
+<code class="highlighter-rouge">mkdir</code> means “make directory”.
+Since <code class="highlighter-rouge">thesis</code> is a relative path
+(i.e., doesn’t have a leading slash),
+the new directory is created in the current working directory:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls -F
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>creatures/  north-pacific-gyre/  thesis/
+data/       notes.txt            writing/
+Desktop/    pizza.cfg
+molecules/  solar.pdf
+</code></pre>
+</div>
+
+<blockquote class="callout">
+  <h2 id="good-names-for-files-and-directories">Good Names for Files and Directories</h2>
+
+  <p>Complicated names of files and directories can make your life very painful
+when working on the command line. Here we provide a few useful
+tips for the names of your files from now on.</p>
+
+  <ol>
+    <li>
+      <p>Don’t use whitespaces.</p>
+
+      <p>White spaces can make a name more meaningful
+but since whitespace is used to break arguments on the command line
+is better to avoid them on name of files and directories.
+You can use <code class="highlighter-rouge">-</code> or <code class="highlighter-rouge">_</code> instead of whitespace.</p>
+    </li>
+    <li>
+      <p>Don’t begin the name with <code class="highlighter-rouge">-</code>.</p>
+
+      <p>Commands treat names starting with <code class="highlighter-rouge">-</code> as options.</p>
+    </li>
+    <li>
+      <p>Stay with letters, numbers, <code class="highlighter-rouge">.</code>, <code class="highlighter-rouge">-</code> and <code class="highlighter-rouge">_</code>.</p>
+
+      <p>May of the others characters have an special meaning on the command line
+that we will learn during this lesson. Some will only make your command not work at all
+but for some of them you can even lose some data.</p>
+    </li>
+  </ol>
+
+  <p>If you need to refer to names of files or directories that have whitespace
+or another non-alphanumeric character you should put quotes around the name.</p>
+</blockquote>
+
+<p>However, there’s nothing in it yet:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls -F thesis
+</code></pre>
+</div>
+
+<p>Let’s change our working directory to <code class="highlighter-rouge">thesis</code> using <code class="highlighter-rouge">cd</code>,
+then run a text editor called Nano to create a file called <code class="highlighter-rouge">draft.txt</code>:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ cd thesis
+$ nano draft.txt
+</code></pre>
+</div>
+
+<blockquote class="callout">
+  <h2 id="which-editor">Which Editor?</h2>
+
+  <p>When we say, “<code class="highlighter-rouge">nano</code> is a text editor,” we really do mean “text”: it can
+only work with plain character data, not tables, images, or any other
+human-friendly media. We use it in examples because almost anyone can
+drive it anywhere without training, but please use something more
+powerful for real work. On Unix systems (such as Linux and Mac OS X),
+many programmers use <a href="http://www.gnu.org/software/emacs/">Emacs</a> or
+<a href="http://www.vim.org/">Vim</a> (both of which are completely unintuitive,
+even by Unix standards), or a graphical editor such as
+<a href="http://projects.gnome.org/gedit/">Gedit</a>. On Windows, you may wish to
+use <a href="http://notepad-plus-plus.org/">Notepad++</a>.  Windows also has a built-in 
+editor called <code class="highlighter-rouge">notepad</code> that can be run from the command line in the same 
+way as <code class="highlighter-rouge">nano</code> for the purposes of this lesson.</p>
+
+  <p>No matter what editor you use, you will need to know where it searches
+for and saves files. If you start it from the shell, it will (probably)
+use your current working directory as its default location. If you use
+your computer’s start menu, it may want to save files in your desktop or
+documents directory instead. You can change this by navigating to
+another directory the first time you “Save As…”</p>
+</blockquote>
+
+<p>Let’s type in a few lines of text.
+Once we’re happy with our text, we can press <code class="highlighter-rouge">Ctrl-O</code> (press the Ctrl or Control key and, while
+holding it down, press the O key) to write our data to disk
+(we’ll be asked what file we want to save this to:
+press Return to accept the suggested default of <code class="highlighter-rouge">draft.txt</code>).</p>
+
+<p><img src="/swc-releases/2016.06/shell-novice/fig/nano-screenshot.png" alt="Nano in action" /></p>
+
+<p>Once our file is saved, we can use <code class="highlighter-rouge">Ctrl-X</code> to quit the editor and 
+return to the shell.</p>
+
+<blockquote class="callout">
+  <h2 id="control-ctrl-or--key">Control, Ctrl, or ^ Key</h2>
+
+  <p>The Control key is also called the “Ctrl” key. There are various ways
+in which using the Control key may be described. For example, you may
+see an instruction to press the Control key and, while holding it down, 
+press the X key, described as any of:</p>
+
+  <ul>
+    <li><code class="highlighter-rouge">Control-X</code></li>
+    <li><code class="highlighter-rouge">Control+X</code></li>
+    <li><code class="highlighter-rouge">Ctrl-X</code></li>
+    <li><code class="highlighter-rouge">Ctrl+X</code></li>
+    <li><code class="highlighter-rouge">^X</code></li>
+  </ul>
+
+  <p>In nano, along the bottom of the screen you’ll see <code class="highlighter-rouge">^G Get Help ^O WriteOut</code>.
+This means that you can use <code class="highlighter-rouge">Control-G</code> to get help and <code class="highlighter-rouge">Control-O</code> to save your
+file.</p>
+</blockquote>
+
+<p><code class="highlighter-rouge">nano</code> doesn’t leave any output on the screen after it exits,
+but <code class="highlighter-rouge">ls</code> now shows that we have created a file called <code class="highlighter-rouge">draft.txt</code>:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>draft.txt
+</code></pre>
+</div>
+
+<p>Let’s tidy up by running <code class="highlighter-rouge">rm draft.txt</code>:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ rm draft.txt
+</code></pre>
+</div>
+
+<p>This command removes files (<code class="highlighter-rouge">rm</code> is short for “remove”).
+If we run <code class="highlighter-rouge">ls</code> again,
+its output is empty once more,
+which tells us that our file is gone:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls
+</code></pre>
+</div>
+
+<blockquote class="callout">
+  <h2 id="deleting-is-forever">Deleting Is Forever</h2>
+
+  <p>The Unix shell doesn’t have a trash bin that we can recover deleted
+files from (though most graphical interfaces to Unix do).  Instead,
+when we delete files, they are unhooked from the file system so that
+their storage space on disk can be recycled. Tools for finding and
+recovering deleted files do exist, but there’s no guarantee they’ll
+work in any particular situation, since the computer may recycle the
+file’s disk space right away.</p>
+</blockquote>
+
+<p>Let’s re-create that file
+and then move up one directory to <code class="highlighter-rouge">/Users/nelle</code> using <code class="highlighter-rouge">cd ..</code>:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ pwd
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>/Users/nelle/thesis
+</code></pre>
+</div>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ nano draft.txt
+$ ls
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>draft.txt
+</code></pre>
+</div>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ cd ..
+</code></pre>
+</div>
+
+<p>If we try to remove the entire <code class="highlighter-rouge">thesis</code> directory using <code class="highlighter-rouge">rm thesis</code>,
+we get an error message:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ rm thesis
+</code></pre>
+</div>
+
+<div class="error highlighter-rouge"><pre class="highlight"><code>rm: cannot remove `thesis': Is a directory
+</code></pre>
+</div>
+
+<p>This happens because <code class="highlighter-rouge">rm</code> by default only works on files, not directories.</p>
+
+<p>To really get rid of <code class="highlighter-rouge">thesis</code> we must also delete the file <code class="highlighter-rouge">draft.txt</code>.
+We can do this with the <a href="https://en.wikipedia.org/wiki/Recursion">recursive</a> option for <code class="highlighter-rouge">rm</code>:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ rm -r thesis
+</code></pre>
+</div>
+
+<blockquote class="callout">
+  <h2 id="with-great-power-comes-great-responsibility">With Great Power Comes Great Responsibility</h2>
+
+  <p>Removing the files in a directory recursively can be very dangerous
+operation. If we’re concerned about what we might be deleting we can
+add the “interactive” flag <code class="highlighter-rouge">-i</code> to <code class="highlighter-rouge">rm</code> which will ask us for confirmation
+before each step</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ rm -r -i thesis
+rm: descend into directory ‘thesis’? y
+rm: remove regular file ‘thesis/draft.txt’? y
+rm: remove directory ‘thesis’? y
+</code></pre>
+  </div>
+
+  <p>This removes everything in the directory, then the directory itself, asking
+at each step for you to confirm the deletion.</p>
+</blockquote>
+
+<p>Let’s create that directory and file one more time.
+(Note that this time we’re running <code class="highlighter-rouge">nano</code> with the path <code class="highlighter-rouge">thesis/draft.txt</code>,
+rather than going into the <code class="highlighter-rouge">thesis</code> directory and running <code class="highlighter-rouge">nano</code> on <code class="highlighter-rouge">draft.txt</code> there.)</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ pwd
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>/Users/nelle
+</code></pre>
+</div>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ mkdir thesis
+$ nano thesis/draft.txt
+$ ls thesis
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>draft.txt
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">draft.txt</code> isn’t a particularly informative name,
+so let’s change the file’s name using <code class="highlighter-rouge">mv</code>,
+which is short for “move”:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ mv thesis/draft.txt thesis/quotes.txt
+</code></pre>
+</div>
+
+<p>The first parameter tells <code class="highlighter-rouge">mv</code> what we’re “moving”,
+while the second is where it’s to go.
+In this case,
+we’re moving <code class="highlighter-rouge">thesis/draft.txt</code> to <code class="highlighter-rouge">thesis/quotes.txt</code>,
+which has the same effect as renaming the file.
+Sure enough,
+<code class="highlighter-rouge">ls</code> shows us that <code class="highlighter-rouge">thesis</code> now contains one file called <code class="highlighter-rouge">quotes.txt</code>:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls thesis
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>quotes.txt
+</code></pre>
+</div>
+
+<p>One has to be careful when specifying the target file name, since <code class="highlighter-rouge">mv</code> will 
+silently overwrite any existing file with the same name, which could 
+lead to data loss. An additional flag, <code class="highlighter-rouge">mv -i</code> (or <code class="highlighter-rouge">mv --interactive</code>),
+can be used to make <code class="highlighter-rouge">mv</code> ask you for confirmation before overwriting.</p>
+
+<p>Just for the sake of inconsistency,
+<code class="highlighter-rouge">mv</code> also works on directories — there is no separate <code class="highlighter-rouge">mvdir</code> command.</p>
+
+<p>Let’s move <code class="highlighter-rouge">quotes.txt</code> into the current working directory.
+We use <code class="highlighter-rouge">mv</code> once again,
+but this time we’ll just use the name of a directory as the second parameter
+to tell <code class="highlighter-rouge">mv</code> that we want to keep the filename,
+but put the file somewhere new.
+(This is why the command is called “move”.)
+In this case,
+the directory name we use is the special directory name <code class="highlighter-rouge">.</code> that we mentioned earlier.</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ mv thesis/quotes.txt .
+</code></pre>
+</div>
+
+<p>The effect is to move the file from the directory it was in to the current working directory.
+<code class="highlighter-rouge">ls</code> now shows us that <code class="highlighter-rouge">thesis</code> is empty:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls thesis
+</code></pre>
+</div>
+
+<p>Further,
+<code class="highlighter-rouge">ls</code> with a filename or directory name as a parameter only lists that file or directory.
+We can use this to see that <code class="highlighter-rouge">quotes.txt</code> is still in our current directory:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls quotes.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>quotes.txt
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">cp</code> command works very much like <code class="highlighter-rouge">mv</code>,
+except it copies a file instead of moving it.
+We can check that it did the right thing using <code class="highlighter-rouge">ls</code>
+with two paths as parameters — like most Unix commands,
+<code class="highlighter-rouge">ls</code> can be given thousands of paths at once:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ cp quotes.txt thesis/quotations.txt
+$ ls quotes.txt thesis/quotations.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>quotes.txt   thesis/quotations.txt
+</code></pre>
+</div>
+
+<p>To prove that we made a copy,
+let’s delete the <code class="highlighter-rouge">quotes.txt</code> file in the current directory
+and then run that same <code class="highlighter-rouge">ls</code> again.</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ rm quotes.txt
+$ ls quotes.txt thesis/quotations.txt
+</code></pre>
+</div>
+
+<div class="error highlighter-rouge"><pre class="highlight"><code>ls: cannot access quotes.txt: No such file or directory
+thesis/quotations.txt
+</code></pre>
+</div>
+
+<p>This time it tells us that it can’t find <code class="highlighter-rouge">quotes.txt</code> in the current directory,
+but it does find the copy in <code class="highlighter-rouge">thesis</code> that we didn’t delete.</p>
+
+<blockquote class="callout">
+  <h2 id="whats-in-a-name">What’s In A Name?</h2>
+
+  <p>You may have noticed that all of Nelle’s files’ names are “something dot
+something”, and in this part of the lesson, we always used the extension 
+<code class="highlighter-rouge">.txt</code>.  This is just a convention: we can call a file <code class="highlighter-rouge">mythesis</code> or
+almost anything else we want. However, most people use two-part names
+most of the time to help them (and their programs) tell different kinds
+of files apart. The second part of such a name is called the
+<strong>filename extension</strong>, and indicates
+what type of data the file holds: <code class="highlighter-rouge">.txt</code> signals a plain text file, <code class="highlighter-rouge">.pdf</code>
+indicates a PDF document, <code class="highlighter-rouge">.cfg</code> is a configuration file full of parameters
+for some program or other, <code class="highlighter-rouge">.png</code> is a PNG image, and so on.</p>
+
+  <p>This is just a convention, albeit an important one. Files contain
+bytes: it’s up to us and our programs to interpret those bytes
+according to the rules for plain text files, PDF documents, configuration
+files, images, and so on.</p>
+
+  <p>Naming a PNG image of a whale as <code class="highlighter-rouge">whale.mp3</code> doesn’t somehow
+magically turn it into a recording of whalesong, though it <em>might</em>
+cause the operating system to try to open it with a music player
+when someone double-clicks it.</p>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="renaming-files">Renaming Files</h2>
+
+  <p>Suppose that you created a <code class="highlighter-rouge">.txt</code> file in your current directory to contain a list of the
+statistical tests you will need to do to analyze your data, and named it: <code class="highlighter-rouge">statstics.txt</code></p>
+
+  <p>After creating and saving this file you realize you misspelled the filename! You want to
+correct the mistake, which of the following commands could you use to do so?</p>
+
+  <ol>
+    <li><code class="highlighter-rouge">cp statstics.txt statistics.txt</code></li>
+    <li><code class="highlighter-rouge">mv statstics.txt statistics.txt</code></li>
+    <li><code class="highlighter-rouge">mv statstics.txt .</code></li>
+    <li><code class="highlighter-rouge">cp statstics.txt .</code></li>
+  </ol>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="moving-and-copying">Moving and Copying</h2>
+
+  <p>What is the output of the closing <code class="highlighter-rouge">ls</code> command in the sequence shown below?</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ pwd
+</code></pre>
+  </div>
+  <div class="output highlighter-rouge"><pre class="highlight"><code>/Users/jamie/data
+</code></pre>
+  </div>
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls
+</code></pre>
+  </div>
+  <div class="output highlighter-rouge"><pre class="highlight"><code>proteins.dat
+</code></pre>
+  </div>
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ mkdir recombine
+$ mv proteins.dat recombine
+$ cp recombine/proteins.dat ../proteins-saved.dat
+$ ls
+</code></pre>
+  </div>
+
+  <ol>
+    <li><code class="highlighter-rouge">proteins-saved.dat recombine</code></li>
+    <li><code class="highlighter-rouge">recombine</code></li>
+    <li><code class="highlighter-rouge">proteins.dat recombine</code></li>
+    <li><code class="highlighter-rouge">proteins-saved.dat</code></li>
+  </ol>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="organizing-directories-and-files">Organizing Directories and Files</h2>
+
+  <p>Jamie is working on a project and she sees that her files aren’t very well
+organized:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls -F
+</code></pre>
+  </div>
+  <div class="output highlighter-rouge"><pre class="highlight"><code>analyzed/  fructose.dat    raw/   sucrose.dat
+</code></pre>
+  </div>
+
+  <p>The <code class="highlighter-rouge">fructose.dat</code> and <code class="highlighter-rouge">sucrose.dat</code> files contain output from her data
+analysis. What command(s) covered in this lesson does she need to run so that the commands below will
+produce the output shown?</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls -F
+</code></pre>
+  </div>
+  <div class="output highlighter-rouge"><pre class="highlight"><code>analyzed/   raw/
+</code></pre>
+  </div>
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls analyzed
+</code></pre>
+  </div>
+  <div class="output highlighter-rouge"><pre class="highlight"><code>fructose.dat    sucrose.dat
+</code></pre>
+  </div>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="copy-with-multiple-filenames">Copy with Multiple Filenames</h2>
+
+  <p>What does <code class="highlighter-rouge">cp</code> do when given several filenames and a directory name, as in:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ mkdir backup
+$ cp thesis/citations.txt thesis/quotations.txt backup
+</code></pre>
+  </div>
+
+  <p>What does <code class="highlighter-rouge">cp</code> do when given three or more filenames, as in:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls -F
+</code></pre>
+  </div>
+  <div class="output highlighter-rouge"><pre class="highlight"><code>intro.txt    methods.txt    survey.txt
+</code></pre>
+  </div>
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ cp intro.txt methods.txt survey.txt
+</code></pre>
+  </div>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="listing-recursively-and-by-time">Listing Recursively and By Time</h2>
+
+  <p>The command <code class="highlighter-rouge">ls -R</code> lists the contents of directories recursively,
+i.e., lists their sub-directories, sub-sub-directories, and so on
+in alphabetical order at each level.
+The command <code class="highlighter-rouge">ls -t</code> lists things by time of last change,
+with most recently changed files or directories first.
+In what order does <code class="highlighter-rouge">ls -R -t</code> display things?</p>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="creating-files-a-different-way">Creating Files a Different Way</h2>
+
+  <p>We have seen how to create text files using the <code class="highlighter-rouge">nano</code> editor.
+Now, try the following command in your home directory:</p>
+
+  <p>$ cd                  # go to your home directory
+$ touch my_file.txt</p>
+
+  <ol>
+    <li>
+      <p>What did the touch command do?
+When you look at your home directory using the GUI file explorer,
+does the file show up?</p>
+    </li>
+    <li>
+      <p>Use <code class="highlighter-rouge">ls -l</code> to inspect the file’s.  How large is <code class="highlighter-rouge">my_file.txt</code>?</p>
+    </li>
+    <li>
+      <p>When might you want to create a file this way?</p>
+    </li>
+  </ol>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="moving-to-the-current-folder">Moving to the Current Folder</h2>
+
+  <p>After running the following commands,
+Jamie realizes that she put the files <code class="highlighter-rouge">sucrose.dat</code> and <code class="highlighter-rouge">maltose.dat</code> into the wrong folder:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls -F
+raw/ analyzed/
+$ ls -F analyzed
+fructose.dat glucose.dat maltose.dat sucrose.dat 
+$ cd raw/
+</code></pre>
+  </div>
+
+  <p>Fill in the blanks to move these files to the current folder
+(i.e., the one she is currently in):</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ mv ___/sucrose.dat  ___/maltose.dat ___
+</code></pre>
+  </div>
+</blockquote>
+
+<blockquote class="keypoints">
+  <h2>Key Points</h2>
+  <ul>
+    
+    <li><p><code class="highlighter-rouge">cp old new</code> copies a file.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">mkdir path</code> creates a new directory.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">mv old new</code> moves (renames) a file or directory.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">rm path</code> removes (deletes) a file.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">rmdir path</code> removes (deletes) an empty directory.</p>
+</li>
+    
+    <li><p>Use of the Control key may be described in many ways, including <code class="highlighter-rouge">Ctrl-X</code>, <code class="highlighter-rouge">Control-X</code>, and <code class="highlighter-rouge">^X</code>.</p>
+</li>
+    
+    <li><p>The shell does not have a trash bin: once something is deleted, it’s really gone.</p>
+</li>
+    
+    <li><p>Nano is a very simple text editor: please use something else for real work.</p>
+</li>
+    
+  </ul>
+</blockquote>
+
+
+      
+      <hr/>
+<footer>
+  <div class="row">
+    <div class="col-md-6" align="left">
+      <h4>
+	Copyright &copy; 2016
+	<a href="https://software-carpentry.org">Software Carpentry Foundation</a>
+	
+      </h4>
+    </div>
+    <div class="col-md-6" align="right">
+      <h4>
+	<a href="/">Source</a>
+	/
+	<a href="/blob/gh-pages/CONTRIBUTING.md">Contributing</a>
+	/
+	<a href="mailto:lessons@software-carpentry.org">Contact</a>
+      </h4>
+    </div>
+  </div>
+</footer>
+
+      
+    </div>
+    <script src="/swc-releases/2016.06/shell-novice/assets/js/jquery.min.js"></script>
+<script src="/swc-releases/2016.06/shell-novice/assets/js/bootstrap.min.js"></script>
+<script src="/swc-releases/2016.06/shell-novice/assets/js/lesson.js"></script>
+
+  </body>
+</html>
