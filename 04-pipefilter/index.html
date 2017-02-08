@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="last-modified" content="2017-02-08 23:53:05 +0100">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- meta "search-domain" used for google site search function google_search() -->
+    <meta name="search-domain" value="/swc-releases/2017.02/shell-novice">
+    <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/lesson.css" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon-swc.ico" />
+    
+    
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+    <title>The Unix Shell: Pipes and Filters</title>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      
+      
+      <a href="https://software-carpentry.org" class="pull-left">
+        <img class="navbar-logo" src="../assets/img/swc-icon-blue.svg" alt="Software Carpentry logo" />
+      </a>
+      
+
+      
+      <a class="navbar-brand" href="../">Home</a>
+
+    </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+
+	
+        <li><a href="../conduct/">Code of Conduct</a></li>
+
+	
+        
+        <li><a href="../setup/">Setup</a></li>
+        <li><a href="../reference/">Reference</a></li>
+        <li class="dropdown">
+          <a href="../" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Episodes <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            
+            <li><a href="../01-intro/">Introducing the Shell</a></li>
+            
+            <li><a href="../02-filedir/">Navigating Files and Directories</a></li>
+            
+            <li><a href="../03-create/">Working With Files and Directories</a></li>
+            
+            <li><a href="../04-pipefilter/">Pipes and Filters</a></li>
+            
+            <li><a href="../05-loop/">Loops</a></li>
+            
+            <li><a href="../06-script/">Shell Scripts</a></li>
+            
+            <li><a href="../07-find/">Finding Things</a></li>
+            
+          </ul>
+        </li>
+	
+
+	
+	
+        <li class="dropdown">
+          <a href="../" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Extras <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            
+            <li><a href="../about/">About</a></li>
+            
+            <li><a href="../discuss/">Discussion</a></li>
+            
+            <li><a href="../figures/">Figures</a></li>
+            
+            <li><a href="../guide/">Instructor Notes</a></li>
+            
+          </ul>
+        </li>
+	
+
+	
+        <li><a href="../license/">License</a></li>
+      </ul>
+      <form class="navbar-form navbar-right" role="search" id="search" onsubmit="google_search(); return false;">
+        <div class="form-group">
+          <input type="text" id="google-search" placeholder="Search..." aria-label="Google site search">
+        </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+
+
+
+
+<div class="row">
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../03-create/"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span><span class="sr-only">previous episode</span></a>
+      
+    </h3>
+  </div>
+  <div class="col-md-10">
+    
+    <h3 class="maintitle"><a href="../">The Unix Shell</a></h3>
+    <h1 class="maintitle">Pipes and Filters</h1>
+    
+  </div>
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../05-loop/"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span><span class="sr-only">next episode</span></a>
+      
+    </h3>
+  </div>
+</div>
+
+
+<blockquote class="objectives">
+  <h2>Overview</h2>
+
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Teaching:</strong> 15 min
+      <br/>
+      <strong>Exercises:</strong> 0 min
+    </div>
+    <div class="col-md-9">
+      <strong>Questions</strong>
+      <ul>
+	
+	<li><p>How can I combine existing commands to do new things?</p>
+</li>
+	
+      </ul>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-9">
+      <strong>Objectives</strong>
+      <ul>
+	
+	<li><p>Redirect a command’s output to a file.</p>
+</li>
+	
+	<li><p>Process a file instead of keyboard input using redirection.</p>
+</li>
+	
+	<li><p>Construct command pipelines with two or more stages.</p>
+</li>
+	
+	<li><p>Explain what usually happens if a program or pipeline isn’t given any input to process.</p>
+</li>
+	
+	<li><p>Explain Unix’s ‘small pieces, loosely joined’ philosophy.</p>
+</li>
+	
+      </ul>
+    </div>
+  </div>
+
+</blockquote>
+
+<p>Now that we know a few basic commands,
+we can finally look at the shell’s most powerful feature:
+the ease with which it lets us combine existing programs in new ways.
+We’ll start with a directory called <code class="highlighter-rouge">molecules</code>
+that contains six files describing some simple organic molecules.
+The <code class="highlighter-rouge">.pdb</code> extension indicates that these files are in Protein Data Bank format,
+a simple text format that specifies the type and position of each atom in the molecule.</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls molecules
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>cubane.pdb    ethane.pdb    methane.pdb
+octane.pdb    pentane.pdb   propane.pdb
+</code></pre>
+</div>
+
+<p>Let’s go into that directory with <code class="highlighter-rouge">cd</code> and run the command <code class="highlighter-rouge">wc *.pdb</code>.
+<code class="highlighter-rouge">wc</code> is the “word count” command:
+it counts the number of lines, words, and characters in files.
+The <code class="highlighter-rouge">*</code> in <code class="highlighter-rouge">*.pdb</code> matches zero or more characters,
+so the shell turns <code class="highlighter-rouge">*.pdb</code> into a list of all <code class="highlighter-rouge">.pdb</code> files in the current directory:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ cd molecules
+$ wc *.pdb
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>  20  156 1158 cubane.pdb
+  12   84  622 ethane.pdb
+   9   57  422 methane.pdb
+  30  246 1828 octane.pdb
+  21  165 1226 pentane.pdb
+  15  111  825 propane.pdb
+ 107  819 6081 total
+</code></pre>
+</div>
+
+<blockquote class="callout">
+  <h2 id="wildcards">Wildcards</h2>
+
+  <p><code class="highlighter-rouge">*</code> is a <strong>wildcard</strong>. It matches zero or more
+characters, so <code class="highlighter-rouge">*.pdb</code> matches <code class="highlighter-rouge">ethane.pdb</code>, <code class="highlighter-rouge">propane.pdb</code>, and every
+file that ends with ‘.pdb’. On the other hand, <code class="highlighter-rouge">p*.pdb</code> only matches
+<code class="highlighter-rouge">pentane.pdb</code> and <code class="highlighter-rouge">propane.pdb</code>, because the ‘p’ at the front only
+matches filenames that begin with the letter ‘p’.</p>
+
+  <p><code class="highlighter-rouge">?</code> is also a wildcard, but it only matches a single character. This
+means that <code class="highlighter-rouge">p?.pdb</code> would match <code class="highlighter-rouge">pi.pdb</code> or <code class="highlighter-rouge">p5.pdb</code> (if we had these two
+files in the <code class="highlighter-rouge">molecules</code> directory), but not <code class="highlighter-rouge">propane.pdb</code>.
+We can use any number of wildcards at a time: for example, <code class="highlighter-rouge">p*.p?*</code>
+matches anything that starts with a ‘p’ and ends with ‘.’, ‘p’, and at
+least one more character (since the <code class="highlighter-rouge">?</code> has to match one character, and
+the final <code class="highlighter-rouge">*</code> can match any number of characters). Thus, <code class="highlighter-rouge">p*.p?*</code> would
+match <code class="highlighter-rouge">preferred.practice</code>, and even <code class="highlighter-rouge">p.pi</code> (since the first <code class="highlighter-rouge">*</code> can
+match no characters at all), but not <code class="highlighter-rouge">quality.practice</code> (doesn’t start
+with ‘p’) or <code class="highlighter-rouge">preferred.p</code> (there isn’t at least one character after the
+‘.p’).</p>
+
+  <p>When the shell sees a wildcard, it expands the wildcard to create a
+list of matching filenames <em>before</em> running the command that was
+asked for. As an exception, if a wildcard expression does not match
+any file, Bash will pass the expression as a parameter to the command
+as it is. For example typing <code class="highlighter-rouge">ls *.pdf</code> in the <code class="highlighter-rouge">molecules</code> directory
+(which contains only files with names ending with <code class="highlighter-rouge">.pdb</code>) results in
+an error message that there is no file called <code class="highlighter-rouge">*.pdf</code>.
+However, generally commands like <code class="highlighter-rouge">wc</code> and <code class="highlighter-rouge">ls</code> see the lists of
+file names matching these expressions, but not the wildcards
+themselves. It is the shell, not the other programs, that deals with
+expanding wildcards, and this is another example of orthogonal design.</p>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="using-wildcards">Using Wildcards</h2>
+
+  <p>When run in the <code class="highlighter-rouge">molecules</code> directory, which <code class="highlighter-rouge">ls</code> command(s) will
+produce this output?</p>
+
+  <p><code class="highlighter-rouge">ethane.pdb   methane.pdb</code></p>
+
+  <ol>
+    <li><code class="highlighter-rouge">ls *t*ane.pdb</code></li>
+    <li><code class="highlighter-rouge">ls *t?ne.*</code></li>
+    <li><code class="highlighter-rouge">ls *t??ne.pdb</code></li>
+    <li><code class="highlighter-rouge">ls ethane.*</code></li>
+  </ol>
+</blockquote>
+
+<p>If we run <code class="highlighter-rouge">wc -l</code> instead of just <code class="highlighter-rouge">wc</code>,
+the output shows only the number of lines per file:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ wc -l *.pdb
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>  20  cubane.pdb
+  12  ethane.pdb
+   9  methane.pdb
+  30  octane.pdb
+  21  pentane.pdb
+  15  propane.pdb
+ 107  total
+</code></pre>
+</div>
+
+<p>We can also use <code class="highlighter-rouge">-w</code> to get only the number of words,
+or <code class="highlighter-rouge">-c</code> to get only the number of characters.</p>
+
+<p>Which of these files is shortest?
+It’s an easy question to answer when there are only six files,
+but what if there were 6000?
+Our first step toward a solution is to run the command:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ wc -l *.pdb &gt; lengths.txt
+</code></pre>
+</div>
+
+<p>The greater than symbol, <code class="highlighter-rouge">&gt;</code>, tells the shell to <strong>redirect</strong> the command’s output
+to a file instead of printing it to the screen. (This is why there is no screen output:
+everything that <code class="highlighter-rouge">wc</code> would have printed has gone into the
+file <code class="highlighter-rouge">lengths.txt</code> instead.)  The shell will create
+the file if it doesn’t exist. If the file exists, it will be
+silently overwritten, which may lead to data loss and thus requires
+some caution.
+<code class="highlighter-rouge">ls lengths.txt</code> confirms that the file exists:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls lengths.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>lengths.txt
+</code></pre>
+</div>
+
+<p>We can now send the content of <code class="highlighter-rouge">lengths.txt</code> to the screen using <code class="highlighter-rouge">cat lengths.txt</code>.
+<code class="highlighter-rouge">cat</code> stands for “concatenate”:
+it prints the contents of files one after another.
+There’s only one file in this case,
+so <code class="highlighter-rouge">cat</code> just shows us what it contains:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ cat lengths.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>  20  cubane.pdb
+  12  ethane.pdb
+   9  methane.pdb
+  30  octane.pdb
+  21  pentane.pdb
+  15  propane.pdb
+ 107  total
+</code></pre>
+</div>
+
+<blockquote class="callout">
+  <h2 id="output-page-by-page">Output Page by Page</h2>
+
+  <p>We’ll continue to use <code class="highlighter-rouge">cat</code> in this lesson, for convenience and consistency,
+but it has the disadvantage that it always dumps the whole file onto your screen.
+More useful in practice is the command <code class="highlighter-rouge">less</code>,
+which you use with <code class="highlighter-rouge">$ less lengths.txt</code>.
+This displays a screenful of the file, and then stops.
+You can go forward one screenful by pressing the spacebar,
+or back one by pressing <code class="highlighter-rouge">b</code>.  Press <code class="highlighter-rouge">q</code> to quit.</p>
+</blockquote>
+
+<p>Now let’s use the <code class="highlighter-rouge">sort</code> command to sort its contents.
+We will also use the <code class="highlighter-rouge">-n</code> flag to specify that the sort is
+numerical instead of alphabetical.
+This does <em>not</em> change the file;
+instead, it sends the sorted result to the screen:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ sort -n lengths.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>  9  methane.pdb
+ 12  ethane.pdb
+ 15  propane.pdb
+ 20  cubane.pdb
+ 21  pentane.pdb
+ 30  octane.pdb
+107  total
+</code></pre>
+</div>
+
+<p>We can put the sorted list of lines in another temporary file called <code class="highlighter-rouge">sorted-lengths.txt</code>
+by putting <code class="highlighter-rouge">&gt; sorted-lengths.txt</code> after the command,
+just as we used <code class="highlighter-rouge">&gt; lengths.txt</code> to put the output of <code class="highlighter-rouge">wc</code> into <code class="highlighter-rouge">lengths.txt</code>.
+Once we’ve done that,
+we can run another command called <code class="highlighter-rouge">head</code> to get the first few lines in <code class="highlighter-rouge">sorted-lengths.txt</code>:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ sort -n lengths.txt &gt; sorted-lengths.txt
+$ head -n 1 sorted-lengths.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>  9  methane.pdb
+</code></pre>
+</div>
+
+<p>Using the parameter <code class="highlighter-rouge">-n 1</code> with <code class="highlighter-rouge">head</code> tells it that
+we only want the first line of the file;
+<code class="highlighter-rouge">-n 20</code> would get the first 20,
+and so on.
+Since <code class="highlighter-rouge">sorted-lengths.txt</code> contains the lengths of our files ordered from least to greatest,
+the output of <code class="highlighter-rouge">head</code> must be the file with the fewest lines.</p>
+
+<blockquote class="callout">
+  <h2 id="redirecting-to-the-same-file">Redirecting to the same file</h2>
+
+  <p>It’s a very bad idea to try redirecting
+the output of a command that operates on a file
+to the same file. For example:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ sort -n lengths.txt &gt; lengths.txt
+</code></pre>
+  </div>
+
+  <p>Doing something like this may give you
+incorrect results and/or delete
+the contents of <code class="highlighter-rouge">lengths.txt</code>.</p>
+</blockquote>
+
+<p>If you think this is confusing,
+you’re in good company:
+even once you understand what <code class="highlighter-rouge">wc</code>, <code class="highlighter-rouge">sort</code>, and <code class="highlighter-rouge">head</code> do,
+all those intermediate files make it hard to follow what’s going on.
+We can make it easier to understand by running <code class="highlighter-rouge">sort</code> and <code class="highlighter-rouge">head</code> together:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ sort -n lengths.txt | head -n 1
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>  9  methane.pdb
+</code></pre>
+</div>
+
+<p>The vertical bar, <code class="highlighter-rouge">|</code>, between the two commands is called a <strong>pipe</strong>.
+It tells the shell that we want to use
+the output of the command on the left
+as the input to the command on the right.
+The computer might create a temporary file if it needs to,
+or copy data from one program to the other in memory,
+or something else entirely;
+we don’t have to know or care.</p>
+
+<p>Nothing prevents us from chaining pipes consecutively.
+That is, we can for example send the output of <code class="highlighter-rouge">wc</code> directly to <code class="highlighter-rouge">sort</code>,
+and then the resulting output to <code class="highlighter-rouge">head</code>.
+Thus we first use a pipe to send the output of <code class="highlighter-rouge">wc</code> to <code class="highlighter-rouge">sort</code>:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ wc -l *.pdb | sort -n
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>   9 methane.pdb
+  12 ethane.pdb
+  15 propane.pdb
+  20 cubane.pdb
+  21 pentane.pdb
+  30 octane.pdb
+ 107 total
+</code></pre>
+</div>
+
+<p>And now we send the output of this pipe, through another pipe, to <code class="highlighter-rouge">head</code>, so that the full pipeline becomes:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ wc -l *.pdb | sort -n | head -n 1
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>   9  methane.pdb
+</code></pre>
+</div>
+
+<p>This is exactly like a mathematician nesting functions like <em>log(3x)</em>
+and saying “the log of three times <em>x</em>”.
+In our case,
+the calculation is “head of sort of line count of <code class="highlighter-rouge">*.pdb</code>”.</p>
+
+<p>Here’s what actually happens behind the scenes when we create a pipe.
+When a computer runs a program — any program — it creates a <strong>process</strong>
+in memory to hold the program’s software and its current state.
+Every process has an input channel called <strong>standard input</strong>.
+(By this point, you may be surprised that the name is so memorable, but don’t worry:
+most Unix programmers call it “stdin”).
+Every process also has a default output channel called <strong>standard output</strong>
+(or “stdout”). A third output channel called <strong>standard error</strong> (stderr) also 
+exists. This channel is typically used for error or diagnostic messages, and it
+allows a user to pipe the output of one program into another while still receiving 
+error messages in the terminal.</p>
+
+<p>The shell is actually just another program.
+Under normal circumstances,
+whatever we type on the keyboard is sent to the shell on its standard input,
+and whatever it produces on standard output is displayed on our screen.
+When we tell the shell to run a program,
+it creates a new process
+and temporarily sends whatever we type on our keyboard to that process’s standard input,
+and whatever the process sends to standard output to the screen.</p>
+
+<p>Here’s what happens when we run <code class="highlighter-rouge">wc -l *.pdb &gt; lengths.txt</code>.
+The shell starts by telling the computer to create a new process to run the <code class="highlighter-rouge">wc</code> program.
+Since we’ve provided some filenames as parameters,
+<code class="highlighter-rouge">wc</code> reads from them instead of from standard input.
+And since we’ve used <code class="highlighter-rouge">&gt;</code> to redirect output to a file,
+the shell connects the process’s standard output to that file.</p>
+
+<p>If we run <code class="highlighter-rouge">wc -l *.pdb | sort -n</code> instead,
+the shell creates two processes
+(one for each process in the pipe)
+so that <code class="highlighter-rouge">wc</code> and <code class="highlighter-rouge">sort</code> run simultaneously.
+The standard output of <code class="highlighter-rouge">wc</code> is fed directly to the standard input of <code class="highlighter-rouge">sort</code>;
+since there’s no redirection with <code class="highlighter-rouge">&gt;</code>,
+<code class="highlighter-rouge">sort</code>’s output goes to the screen.
+And if we run <code class="highlighter-rouge">wc -l *.pdb | sort -n | head -n 1</code>,
+we get three processes with data flowing from the files,
+through <code class="highlighter-rouge">wc</code> to <code class="highlighter-rouge">sort</code>,
+and from <code class="highlighter-rouge">sort</code> through <code class="highlighter-rouge">head</code> to the screen.</p>
+
+<p><img src="../fig/redirects-and-pipes.png" alt="Redirects and Pipes" /></p>
+
+<p>This simple idea is why Unix has been so successful.
+Instead of creating enormous programs that try to do many different things,
+Unix programmers focus on creating lots of simple tools that each do one job well,
+and that work well with each other.
+This programming model is called “pipes and filters”.
+We’ve already seen pipes;
+a <strong>filter</strong> is a program like <code class="highlighter-rouge">wc</code> or <code class="highlighter-rouge">sort</code>
+that transforms a stream of input into a stream of output.
+Almost all of the standard Unix tools can work this way:
+unless told to do otherwise,
+they read from standard input,
+do something with what they’ve read,
+and write to standard output.</p>
+
+<p>The key is that any program that reads lines of text from standard input
+and writes lines of text to standard output
+can be combined with every other program that behaves this way as well.
+You can <em>and should</em> write your programs this way
+so that you and other people can put those programs into pipes to multiply their power.</p>
+
+<blockquote class="callout">
+  <h2 id="redirecting-input">Redirecting Input</h2>
+
+  <p>As well as using <code class="highlighter-rouge">&gt;</code> to redirect a program’s output, we can use <code class="highlighter-rouge">&lt;</code> to
+redirect its input, i.e., to read from a file instead of from standard
+input. For example, instead of writing <code class="highlighter-rouge">wc ammonia.pdb</code>, we could write
+<code class="highlighter-rouge">wc &lt; ammonia.pdb</code>. In the first case, <code class="highlighter-rouge">wc</code> gets a command line
+parameter telling it what file to open. In the second, <code class="highlighter-rouge">wc</code> doesn’t have
+any command line parameters, so it reads from standard input, but we
+have told the shell to send the contents of <code class="highlighter-rouge">ammonia.pdb</code> to <code class="highlighter-rouge">wc</code>’s
+standard input.</p>
+</blockquote>
+
+<h2 id="nelles-pipeline-checking-files">Nelle’s Pipeline: Checking Files</h2>
+
+<p>Nelle has run her samples through the assay machines
+and created 1520 files in the <code class="highlighter-rouge">north-pacific-gyre/2012-07-03</code> directory described earlier.
+As a quick sanity check, starting from her home directory, Nelle types:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ cd north-pacific-gyre/2012-07-03
+$ wc -l *.txt
+</code></pre>
+</div>
+
+<p>The output is 1520 lines that look like this:</p>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>300 NENE01729A.txt
+300 NENE01729B.txt
+300 NENE01736A.txt
+300 NENE01751A.txt
+300 NENE01751B.txt
+300 NENE01812A.txt
+... ...
+</code></pre>
+</div>
+
+<p>Now she types this:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ wc -l *.txt | sort -n | head -n 5
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code> 240 NENE02018B.txt
+ 300 NENE01729A.txt
+ 300 NENE01729B.txt
+ 300 NENE01736A.txt
+ 300 NENE01751A.txt
+</code></pre>
+</div>
+
+<p>Whoops: one of the files is 60 lines shorter than the others.
+When she goes back and checks it,
+she sees that she did that assay at 8:00 on a Monday morning — someone
+was probably in using the machine on the weekend,
+and she forgot to reset it.
+Before re-running that sample,
+she checks to see if any files have too much data:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ wc -l *.txt | sort -n | tail -n 5
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code> 300 NENE02040B.txt
+ 300 NENE02040Z.txt
+ 300 NENE02043A.txt
+ 300 NENE02043B.txt
+5040 total
+</code></pre>
+</div>
+
+<p>Those numbers look good — but what’s that ‘Z’ doing there in the third-to-last line?
+All of her samples should be marked ‘A’ or ‘B’;
+by convention,
+her lab uses ‘Z’ to indicate samples with missing information.
+To find others like it, she does this:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ ls *Z.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>NENE01971Z.txt    NENE02040Z.txt
+</code></pre>
+</div>
+
+<p>Sure enough,
+when she checks the log on her laptop,
+there’s no depth recorded for either of those samples.
+Since it’s too late to get the information any other way,
+she must exclude those two files from her analysis.
+She could just delete them using <code class="highlighter-rouge">rm</code>,
+but there are actually some analyses she might do later where depth doesn’t matter,
+so instead, she’ll just be careful later on to select files using the wildcard expression <code class="highlighter-rouge">*[AB].txt</code>.
+As always,
+the <code class="highlighter-rouge">*</code> matches any number of characters;
+the expression <code class="highlighter-rouge">[AB]</code> matches either an ‘A’ or a ‘B’,
+so this matches all the valid data files she has.</p>
+
+<blockquote class="challenge">
+  <h2 id="what-does-sort--n-do">What Does <code class="highlighter-rouge">sort -n</code> Do?</h2>
+
+  <p>If we run <code class="highlighter-rouge">sort</code> on this file:</p>
+
+  <div class="source highlighter-rouge"><pre class="highlight"><code>10
+2
+19
+22
+6
+</code></pre>
+  </div>
+
+  <p>the output is:</p>
+
+  <div class="output highlighter-rouge"><pre class="highlight"><code>10
+19
+2
+22
+6
+</code></pre>
+  </div>
+
+  <p>If we run <code class="highlighter-rouge">sort -n</code> on the same input, we get this instead:</p>
+
+  <div class="output highlighter-rouge"><pre class="highlight"><code>2
+6
+10
+19
+22
+</code></pre>
+  </div>
+
+  <p>Explain why <code class="highlighter-rouge">-n</code> has this effect.</p>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="what-does--mean">What Does <code class="highlighter-rouge">&lt;</code> Mean?</h2>
+
+  <p>What is the difference between:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ wc -l &lt; mydata.dat
+</code></pre>
+  </div>
+
+  <p>and:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ wc -l mydata.dat
+</code></pre>
+  </div>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="what-does--mean-1">What Does <code class="highlighter-rouge">&gt;&gt;</code> Mean?</h2>
+
+  <p>What is the difference between:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ echo hello &gt; testfile01.txt
+</code></pre>
+  </div>
+
+  <p>and:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ echo hello &gt;&gt; testfile02.txt
+</code></pre>
+  </div>
+
+  <p>Hint: Try executing each command twice in a row and then examining the output files.</p>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="more-on-wildcards">More on Wildcards</h2>
+
+  <p>Sam has a directory containing calibration data, datasets, and descriptions of
+the datasets:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>2015-10-23-calibration.txt
+2015-10-23-dataset1.txt
+2015-10-23-dataset2.txt
+2015-10-23-dataset_overview.txt
+2015-10-26-calibration.txt
+2015-10-26-dataset1.txt
+2015-10-26-dataset2.txt
+2015-10-26-dataset_overview.txt
+2015-11-23-calibration.txt
+2015-11-23-dataset1.txt
+2015-11-23-dataset2.txt
+2015-11-23-dataset_overview.txt
+</code></pre>
+  </div>
+
+  <p>Before heading off to another field trip, she wants to back up her data and
+send some datasets to her colleague Bob. Sam uses the following commands
+to get the job done:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ cp *dataset* /backup/datasets
+$ cp ____calibration____ /backup/calibration
+$ cp 2015-____-____ ~/send_to_bob/all_november_files/
+$ cp ____ ~/send_to_bob/all_datasets_created_on_a_23rd/
+</code></pre>
+  </div>
+
+  <p>Help Sam by filling in the blanks.</p>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="piping-commands-together">Piping Commands Together</h2>
+
+  <p>In our current directory, we want to find the 3 files which have the least number of
+lines. Which command listed below would work?</p>
+
+  <ol>
+    <li><code class="highlighter-rouge">wc -l * &gt; sort -n &gt; head -n 3</code></li>
+    <li><code class="highlighter-rouge">wc -l * | sort -n | head -n 1-3</code></li>
+    <li><code class="highlighter-rouge">wc -l * | head -n 3 | sort -n</code></li>
+    <li><code class="highlighter-rouge">wc -l * | sort -n | head -n 3</code></li>
+  </ol>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="why-does-uniq-only-remove-adjacent-duplicates">Why Does <code class="highlighter-rouge">uniq</code> Only Remove Adjacent Duplicates?</h2>
+
+  <p>The command <code class="highlighter-rouge">uniq</code> removes adjacent duplicated lines from its input.
+For example, if a file <code class="highlighter-rouge">salmon.txt</code> contains:</p>
+
+  <div class="source highlighter-rouge"><pre class="highlight"><code>coho
+coho
+steelhead
+coho
+steelhead
+steelhead
+</code></pre>
+  </div>
+
+  <p>then <code class="highlighter-rouge">uniq salmon.txt</code> produces:</p>
+
+  <div class="output highlighter-rouge"><pre class="highlight"><code>coho
+steelhead
+coho
+steelhead
+</code></pre>
+  </div>
+
+  <p>Why do you think <code class="highlighter-rouge">uniq</code> only removes <em>adjacent</em> duplicated lines?
+(Hint: think about very large data sets.) What other command could
+you combine with it in a pipe to remove all duplicated lines?</p>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="pipe-reading-comprehension">Pipe Reading Comprehension</h2>
+
+  <p>A file called <code class="highlighter-rouge">animals.txt</code> contains the following data:</p>
+
+  <div class="source highlighter-rouge"><pre class="highlight"><code>2012-11-05,deer
+2012-11-05,rabbit
+2012-11-05,raccoon
+2012-11-06,rabbit
+2012-11-06,deer
+2012-11-06,fox
+2012-11-07,rabbit
+2012-11-07,bear
+</code></pre>
+  </div>
+
+  <p>What text passes through each of the pipes and the final redirect in the pipeline below?</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ cat animals.txt | head -n 5 | tail -n 3 | sort -r &gt; final.txt
+</code></pre>
+  </div>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="pipe-construction">Pipe Construction</h2>
+
+  <p>For the file <code class="highlighter-rouge">animals.txt</code> from the previous exercise, the command:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ cut -d , -f 2 animals.txt
+</code></pre>
+  </div>
+
+  <p>produces the following output:</p>
+
+  <div class="output highlighter-rouge"><pre class="highlight"><code>deer
+rabbit
+raccoon
+rabbit
+deer
+fox
+rabbit
+bear
+</code></pre>
+  </div>
+
+  <p>What other command(s) could be added to this in a pipeline to find
+out what animals the file contains (without any duplicates in their
+names)?</p>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="removing-unneeded-files">Removing Unneeded Files</h2>
+
+  <p>Suppose you want to delete your processed data files, and only keep
+your raw files and processing script to save storage.
+The raw files end in <code class="highlighter-rouge">.dat</code> and the processed files end in <code class="highlighter-rouge">.txt</code>.
+Which of the following would remove all the processed data files,
+and <em>only</em> the processed data files?</p>
+
+  <ol>
+    <li><code class="highlighter-rouge">rm ?.txt</code></li>
+    <li><code class="highlighter-rouge">rm *.txt</code></li>
+    <li><code class="highlighter-rouge">rm * .txt</code></li>
+    <li><code class="highlighter-rouge">rm *.*</code></li>
+  </ol>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="wildcard-expressions">Wildcard Expressions</h2>
+
+  <p>Wildcard expressions can be very complex, but you can sometimes write
+them in ways that only use simple syntax, at the expense of being a bit
+more verbose.  For example, the wildcard expression <code class="highlighter-rouge">*[AB].txt</code>
+matches all files ending in <code class="highlighter-rouge">A.txt</code> or <code class="highlighter-rouge">B.txt</code>. Imagine you forgot about
+this.</p>
+
+  <ol>
+    <li>
+      <p>Can you match the same set of files with basic wildcard expressions
+that do not use the <code class="highlighter-rouge">[]</code> syntax? <em>Hint</em>: You may need more than one
+expression.</p>
+    </li>
+    <li>
+      <p>The expression that you found and the expression from the lesson match the
+same set of files in this example. What is the small difference between the
+outputs?</p>
+    </li>
+    <li>
+      <p>Under what circumstances would your new expression produce an error message
+where the original one would not?</p>
+    </li>
+  </ol>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="which-pipe">Which Pipe?</h2>
+
+  <p>A file called animals.txt contains 586 lines of data formatted as follows:</p>
+
+  <div class="output highlighter-rouge"><pre class="highlight"><code>2012-11-05,deer
+2012-11-05,rabbit
+2012-11-05,raccoon
+2012-11-06,rabbit
+...
+</code></pre>
+  </div>
+
+  <p>What command would you use to produce a table that shows
+the total count of each type of animal in the file?</p>
+
+  <ol>
+    <li><code class="highlighter-rouge">grep {deer, rabbit, raccoon, deer, fox, bear} animals.txt | wc -l</code></li>
+    <li><code class="highlighter-rouge">sort animals.txt | uniq -c</code></li>
+    <li><code class="highlighter-rouge">sort -t, -k2,2 animals.txt | uniq -c</code></li>
+    <li><code class="highlighter-rouge">cut -d, -f 2 animals.txt | uniq -c</code></li>
+    <li><code class="highlighter-rouge">cut -d, -f 2 animals.txt | sort | uniq -c</code></li>
+    <li><code class="highlighter-rouge">cut -d, -f 2 animals.txt | sort | uniq -c | wc -l</code></li>
+  </ol>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="appending-data">Appending Data</h2>
+
+  <p>Consider the file <code class="highlighter-rouge">animals.txt</code>, used in previous exercise.
+After these commands, select the alternative that
+corresponds the file <code class="highlighter-rouge">animalsUpd.txt</code>:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ head -3 animals.txt &gt; animalsUpd.txt
+$ tail -2 animals.txt &gt;&gt; animalsUpd.txt
+</code></pre>
+  </div>
+
+  <ol>
+    <li>The first three lines of <code class="highlighter-rouge">animals.txt</code></li>
+    <li>The last two lines of <code class="highlighter-rouge">animals.txt</code></li>
+    <li>The first three lines and the last two lines of <code class="highlighter-rouge">animals.txt</code></li>
+    <li>The second and third lines of <code class="highlighter-rouge">animals.txt</code></li>
+  </ol>
+</blockquote>
+
+<blockquote class="keypoints">
+  <h2>Key Points</h2>
+  <ul>
+    
+    <li><p><code class="highlighter-rouge">cat</code> displays the contents of its inputs.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">head</code> displays the first few lines of its input.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">tail</code> displays the last few lines of its input.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">sort</code> sorts its inputs.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">wc</code> counts lines, words, and characters in its inputs.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">*</code> matches zero or more characters in a filename, so <code class="highlighter-rouge">*.txt</code> matches all files ending in <code class="highlighter-rouge">.txt</code>.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">?</code> matches any single character in a filename, so <code class="highlighter-rouge">?.txt</code> matches <code class="highlighter-rouge">a.txt</code> but not <code class="highlighter-rouge">any.txt</code>.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">command &gt; file</code> redirects a command’s output to a file.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">first | second</code> is a pipeline: the output of the first command is used as the input to the second.</p>
+</li>
+    
+    <li><p>The best way to use the shell is to use pipes to combine simple single-purpose programs (filters).</p>
+</li>
+    
+  </ul>
+</blockquote>
+
+
+
+
+
+<div class="row">
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../03-create/"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span><span class="sr-only">previous episode</span></a>
+      
+    </h3>
+  </div>
+  <div class="col-md-10">
+    
+  </div>
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../05-loop/"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span><span class="sr-only">next episode</span></a>
+      
+    </h3>
+  </div>
+</div>
+
+
+      
+      <footer>
+  <div class="row">
+    <div class="col-md-6" align="left">
+      <h4>
+	Copyright &copy; 2016
+	<a href="https://software-carpentry.org">Software Carpentry Foundation</a>
+	
+      </h4>
+    </div>
+    <div class="col-md-6" align="right">
+      <h4>
+	<a href="/">Source</a>
+	/
+	<a href="/blob/gh-pages/CONTRIBUTING.md">Contributing</a>
+	/
+	<a href="mailto:lessons@software-carpentry.org">Contact</a>
+      </h4>
+    </div>
+  </div>
+</footer>
+
+      
+    </div>
+    <script src="../assets/js/jquery.min.js"></script>
+<script src="../assets/js/bootstrap.min.js"></script>
+<script src="../assets/js/lesson.js"></script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-37305346-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>

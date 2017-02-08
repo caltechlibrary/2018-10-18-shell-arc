@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="last-modified" content="2017-02-08 23:53:05 +0100">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- meta "search-domain" used for google site search function google_search() -->
+    <meta name="search-domain" value="/swc-releases/2017.02/shell-novice">
+    <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/lesson.css" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon-swc.ico" />
+    
+    
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+    <title>The Unix Shell: Loops</title>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      
+      
+      <a href="https://software-carpentry.org" class="pull-left">
+        <img class="navbar-logo" src="../assets/img/swc-icon-blue.svg" alt="Software Carpentry logo" />
+      </a>
+      
+
+      
+      <a class="navbar-brand" href="../">Home</a>
+
+    </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+
+	
+        <li><a href="../conduct/">Code of Conduct</a></li>
+
+	
+        
+        <li><a href="../setup/">Setup</a></li>
+        <li><a href="../reference/">Reference</a></li>
+        <li class="dropdown">
+          <a href="../" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Episodes <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            
+            <li><a href="../01-intro/">Introducing the Shell</a></li>
+            
+            <li><a href="../02-filedir/">Navigating Files and Directories</a></li>
+            
+            <li><a href="../03-create/">Working With Files and Directories</a></li>
+            
+            <li><a href="../04-pipefilter/">Pipes and Filters</a></li>
+            
+            <li><a href="../05-loop/">Loops</a></li>
+            
+            <li><a href="../06-script/">Shell Scripts</a></li>
+            
+            <li><a href="../07-find/">Finding Things</a></li>
+            
+          </ul>
+        </li>
+	
+
+	
+	
+        <li class="dropdown">
+          <a href="../" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Extras <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            
+            <li><a href="../about/">About</a></li>
+            
+            <li><a href="../discuss/">Discussion</a></li>
+            
+            <li><a href="../figures/">Figures</a></li>
+            
+            <li><a href="../guide/">Instructor Notes</a></li>
+            
+          </ul>
+        </li>
+	
+
+	
+        <li><a href="../license/">License</a></li>
+      </ul>
+      <form class="navbar-form navbar-right" role="search" id="search" onsubmit="google_search(); return false;">
+        <div class="form-group">
+          <input type="text" id="google-search" placeholder="Search..." aria-label="Google site search">
+        </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+
+
+
+
+<div class="row">
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../04-pipefilter/"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span><span class="sr-only">previous episode</span></a>
+      
+    </h3>
+  </div>
+  <div class="col-md-10">
+    
+    <h3 class="maintitle"><a href="../">The Unix Shell</a></h3>
+    <h1 class="maintitle">Loops</h1>
+    
+  </div>
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../06-script/"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span><span class="sr-only">next episode</span></a>
+      
+    </h3>
+  </div>
+</div>
+
+
+<blockquote class="objectives">
+  <h2>Overview</h2>
+
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Teaching:</strong> 15 min
+      <br/>
+      <strong>Exercises:</strong> 0 min
+    </div>
+    <div class="col-md-9">
+      <strong>Questions</strong>
+      <ul>
+	
+	<li><p>How can I perform the same actions on many different files?</p>
+</li>
+	
+      </ul>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-9">
+      <strong>Objectives</strong>
+      <ul>
+	
+	<li><p>Write a loop that applies one or more commands separately to each file in a set of files.</p>
+</li>
+	
+	<li><p>Trace the values taken on by a loop variable during execution of the loop.</p>
+</li>
+	
+	<li><p>Explain the difference between a variable’s name and its value.</p>
+</li>
+	
+	<li><p>Explain why spaces and some punctuation characters shouldn’t be used in file names.</p>
+</li>
+	
+	<li><p>Demonstrate how to see what commands have recently been executed.</p>
+</li>
+	
+	<li><p>Re-run recently executed commands without retyping them.</p>
+</li>
+	
+      </ul>
+    </div>
+  </div>
+
+</blockquote>
+
+<p><strong>Loops</strong> are key to productivity improvements through automation as they allow us to execute
+commands repetitively. Similar to wildcards and tab completion, using loops also reduces the
+amount of typing (and typing mistakes).
+Suppose we have several hundred genome data files named <code class="highlighter-rouge">basilisk.dat</code>, <code class="highlighter-rouge">unicorn.dat</code>, and so on.
+In this example,
+we’ll use the <code class="highlighter-rouge">creatures</code> directory which only has two example files,
+but the principles can be applied to many many more files at once.
+We would like to modify these files, but also save a version of the original files, naming the copies
+<code class="highlighter-rouge">original-basilisk.dat</code> and <code class="highlighter-rouge">original-unicorn.dat</code>.
+We can’t use:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ cp *.dat original-*.dat
+</code></pre>
+</div>
+
+<p>because that would expand to:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ cp basilisk.dat unicorn.dat original-*.dat
+</code></pre>
+</div>
+
+<p>This wouldn’t back up our files, instead we get an error:</p>
+
+<div class="error highlighter-rouge"><pre class="highlight"><code>cp: target `original-*.dat' is not a directory
+</code></pre>
+</div>
+
+<p>This problem arises when <code class="highlighter-rouge">cp</code> receives more than two inputs. When this happens, it
+expects the last input to be a directory where it can copy all the files it was passed.
+Since there is no directory named <code class="highlighter-rouge">original-*.dat</code> in the <code class="highlighter-rouge">creatures</code> directory we get an
+error.</p>
+
+<p>Instead, we can use a <strong>loop</strong>
+to do some operation once for each thing in a list.
+Here’s a simple example that displays the first three lines of each file in turn:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ for filename in basilisk.dat unicorn.dat
+&gt; do
+&gt;    head -n 3 $filename
+&gt; done
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>COMMON NAME: basilisk
+CLASSIFICATION: basiliscus vulgaris
+UPDATED: 1745-05-02
+COMMON NAME: unicorn
+CLASSIFICATION: equus monoceros
+UPDATED: 1738-11-24
+</code></pre>
+</div>
+
+<p>When the shell sees the keyword <code class="highlighter-rouge">for</code>,
+it knows to repeat a command (or group of commands) once for each thing <code class="highlighter-rouge">in</code> a list.
+For each iteration,
+the name of the each thing is sequentially assigned to
+the <strong>variable</strong> and the commands inside the loop are executed before moving on to 
+the next thing in the list.
+Inside the loop,
+we call for the variable’s value by putting <code class="highlighter-rouge">$</code> in front of it.
+The <code class="highlighter-rouge">$</code> tells the shell interpreter to treat
+the <strong>variable</strong> as a variable name and substitute its value in its place,
+rather than treat it as text or an external command.</p>
+
+<p>In this example, the list is two filenames: <code class="highlighter-rouge">basilisk.dat</code> and <code class="highlighter-rouge">unicorn.dat</code>.
+Each time the loop iterates, it will assign a file name to the variable <code class="highlighter-rouge">filename</code>
+and run the <code class="highlighter-rouge">head</code> command.
+The first time through the loop,
+<code class="highlighter-rouge">$filename</code> is <code class="highlighter-rouge">basilisk.dat</code>. 
+The interpreter runs the command <code class="highlighter-rouge">head</code> on <code class="highlighter-rouge">basilisk.dat</code>, 
+and the prints the 
+first three lines of <code class="highlighter-rouge">basilisk.dat</code>.
+For the second iteration, <code class="highlighter-rouge">$filename</code> becomes 
+<code class="highlighter-rouge">unicorn.dat</code>. This time, the shell runs <code class="highlighter-rouge">head</code> on <code class="highlighter-rouge">unicorn.dat</code>
+and prints the first three lines of <code class="highlighter-rouge">unicorn.dat</code>. 
+Since the list was only two items, the shell exits the <code class="highlighter-rouge">for</code> loop.</p>
+
+<p>When using variables it is also
+possible to put the names into curly braces to clearly delimit the variable
+name: <code class="highlighter-rouge">$filename</code> is equivalent to <code class="highlighter-rouge">${filename}</code>, but is different from
+<code class="highlighter-rouge">${file}name</code>. You may find this notation in other people’s programs.</p>
+
+<blockquote class="callout">
+  <h2 id="follow-the-prompt">Follow the Prompt</h2>
+
+  <p>The shell prompt changes from <code class="highlighter-rouge">$</code> to <code class="highlighter-rouge">&gt;</code> and back again as we were
+typing in our loop. The second prompt, <code class="highlighter-rouge">&gt;</code>, is different to remind
+us that we haven’t finished typing a complete command yet. A semicolon, <code class="highlighter-rouge">;</code>,
+can be used to separate two commands written on a single line.</p>
+</blockquote>
+
+<blockquote class="callout">
+  <h2 id="same-symbols-different-meanings">Same Symbols, Different Meanings</h2>
+
+  <p>Here we see <code class="highlighter-rouge">&gt;</code> being used a shell prompt, whereas <code class="highlighter-rouge">&gt;</code> is also
+used to redirect output.
+Similarly, <code class="highlighter-rouge">$</code> is used as a shell prompt, but, as we saw earler,
+it is also used to ask the shell to get the value of a variable.</p>
+
+  <p>If the <em>shell</em> prints <code class="highlighter-rouge">&gt;</code> or <code class="highlighter-rouge">$</code> then it expects you to type something,
+and the symbol is a prompt.</p>
+
+  <p>If <em>you</em> type <code class="highlighter-rouge">&gt;</code> or <code class="highlighter-rouge">$</code> yourself, it is an instruction from you that
+the shell to redirect output or get the value of a variable.</p>
+</blockquote>
+
+<p>We have called the variable in this loop <code class="highlighter-rouge">filename</code>
+in order to make its purpose clearer to human readers.
+The shell itself doesn’t care what the variable is called;
+if we wrote this loop as:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>for x in basilisk.dat unicorn.dat
+do
+    head -n 3 $x
+done
+</code></pre>
+</div>
+
+<p>or:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>for temperature in basilisk.dat unicorn.dat
+do
+    head -n 3 $temperature
+done
+</code></pre>
+</div>
+
+<p>it would work exactly the same way.
+<em>Don’t do this.</em>
+Programs are only useful if people can understand them,
+so meaningless names (like <code class="highlighter-rouge">x</code>) or misleading names (like <code class="highlighter-rouge">temperature</code>)
+increase the odds that the program won’t do what its readers think it does.</p>
+
+<p>Here’s a slightly more complicated loop:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>for filename in *.dat
+do
+    echo $filename
+    head -n 100 $filename | tail -n 20
+done
+</code></pre>
+</div>
+
+<p>The shell starts by expanding <code class="highlighter-rouge">*.dat</code> to create the list of files it will process.
+The <strong>loop body</strong>
+then executes two commands for each of those files.
+The first, <code class="highlighter-rouge">echo</code>, just prints its command-line parameters to standard output.
+For example:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ echo hello there
+</code></pre>
+</div>
+
+<p>prints:</p>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>hello there
+</code></pre>
+</div>
+
+<p>In this case,
+since the shell expands <code class="highlighter-rouge">$filename</code> to be the name of a file,
+<code class="highlighter-rouge">echo $filename</code> just prints the name of the file.
+Note that we can’t write this as:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>for filename in *.dat
+do
+    $filename
+    head -n 100 $filename | tail -n 20
+done
+</code></pre>
+</div>
+
+<p>because then the first time through the loop,
+when <code class="highlighter-rouge">$filename</code> expanded to <code class="highlighter-rouge">basilisk.dat</code>, the shell would try to run <code class="highlighter-rouge">basilisk.dat</code> as a program.
+Finally,
+the <code class="highlighter-rouge">head</code> and <code class="highlighter-rouge">tail</code> combination selects lines 81-100
+from whatever file is being processed
+(assuming the file has at least 100 lines).</p>
+
+<blockquote class="callout">
+  <h2 id="spaces-in-names">Spaces in Names</h2>
+
+  <p>Whitespace is used to separate the elements on the list
+that we are going to loop over. If on the list we have elements
+with whitespace we need to quote those elements
+and our variable when using it.
+Suppose our data files are named:</p>
+
+  <div class="source highlighter-rouge"><pre class="highlight"><code>red dragon.dat
+purple unicorn.dat
+</code></pre>
+  </div>
+
+  <p>We need to use</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>for filename in "red dragon.dat" "purple unicorn.dat"
+do
+    head -n 100 "$filename" | tail -n 20
+done
+</code></pre>
+  </div>
+
+  <p>It is simpler just to avoid using whitespaces (or other special characters) in filenames.</p>
+</blockquote>
+
+<p>Going back to our original file copying problem,
+we can solve it using this loop:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>for filename in *.dat
+do
+    cp $filename original-$filename
+done
+</code></pre>
+</div>
+
+<p>This loop runs the <code class="highlighter-rouge">cp</code> command once for each filename.
+The first time,
+when <code class="highlighter-rouge">$filename</code> expands to <code class="highlighter-rouge">basilisk.dat</code>,
+the shell executes:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>cp basilisk.dat original-basilisk.dat
+</code></pre>
+</div>
+
+<p>The second time, the command is:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>cp unicorn.dat original-unicorn.dat
+</code></pre>
+</div>
+
+<p>Since the <code class="highlighter-rouge">cp</code> command does not normally produce any output, it’s hard to check 
+that the loop is doing the correct thing. By prefixing the command with <code class="highlighter-rouge">echo</code> 
+it is possible to see each command as it <em>would</em> be executed. The following diagram 
+shows what happens when the modified script is executed, and demonstrates how the 
+judicious use of <code class="highlighter-rouge">echo</code> is a good debugging technique.</p>
+
+<p><img src="../fig/shell_script_for_loop_flow_chart.svg" alt="For Loop in Action" /></p>
+
+<h2 id="nelles-pipeline-processing-files">Nelle’s Pipeline: Processing Files</h2>
+
+<p>Nelle is now ready to process her data files.
+Since she’s still learning how to use the shell,
+she decides to build up the required commands in stages.
+Her first step is to make sure that she can select the right files — remember,
+these are ones whose names end in ‘A’ or ‘B’, rather than ‘Z’. Starting from her home directory, Nelle types:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ cd north-pacific-gyre/2012-07-03
+$ for datafile in *[AB].txt
+&gt; do
+&gt;     echo $datafile
+&gt; done
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>NENE01729A.txt
+NENE01729B.txt
+NENE01736A.txt
+...
+NENE02043A.txt
+NENE02043B.txt
+</code></pre>
+</div>
+
+<p>Her next step is to decide
+what to call the files that the <code class="highlighter-rouge">goostats</code> analysis program will create.
+Prefixing each input file’s name with “stats” seems simple,
+so she modifies her loop to do that:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ for datafile in *[AB].txt
+&gt; do
+&gt;     echo $datafile stats-$datafile
+&gt; done
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>NENE01729A.txt stats-NENE01729A.txt
+NENE01729B.txt stats-NENE01729B.txt
+NENE01736A.txt stats-NENE01736A.txt
+...
+NENE02043A.txt stats-NENE02043A.txt
+NENE02043B.txt stats-NENE02043B.txt
+</code></pre>
+</div>
+
+<p>She hasn’t actually run <code class="highlighter-rouge">goostats</code> yet,
+but now she’s sure she can select the right files and generate the right output filenames.</p>
+
+<p>Typing in commands over and over again is becoming tedious,
+though,
+and Nelle is worried about making mistakes,
+so instead of re-entering her loop,
+she presses the up arrow.
+In response,
+the shell redisplays the whole loop on one line
+(using semi-colons to separate the pieces):</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ for datafile in *[AB].txt; do echo $datafile stats-$datafile; done
+</code></pre>
+</div>
+
+<p>Using the left arrow key,
+Nelle backs up and changes the command <code class="highlighter-rouge">echo</code> to <code class="highlighter-rouge">bash goostats</code>:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ for datafile in *[AB].txt; do bash goostats $datafile stats-$datafile; done
+</code></pre>
+</div>
+
+<p>When she presses Enter,
+the shell runs the modified command.
+However, nothing appears to happen — there is no output.
+After a moment, Nelle realizes that since her script doesn’t print anything to the screen any longer,
+she has no idea whether it is running, much less how quickly.
+She kills the running command by typing <code class="highlighter-rouge">Ctrl-C</code>,
+uses up-arrow to repeat the command,
+and edits it to read:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ for datafile in *[AB].txt; do echo $datafile; bash goostats $datafile stats-$datafile; done
+</code></pre>
+</div>
+
+<blockquote class="callout">
+  <h2 id="beginning-and-end">Beginning and End</h2>
+
+  <p>We can move to the beginning of a line in the shell by typing <code class="highlighter-rouge">Ctrl-A</code>
+and to the end using <code class="highlighter-rouge">Ctrl-E</code>.</p>
+</blockquote>
+
+<p>When she runs her program now,
+it produces one line of output every five seconds or so:</p>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>NENE01729A.txt
+NENE01729B.txt
+NENE01736A.txt
+...
+</code></pre>
+</div>
+
+<p>1518 times 5 seconds,
+divided by 60,
+tells her that her script will take about two hours to run.
+As a final check,
+she opens another terminal window,
+goes into <code class="highlighter-rouge">north-pacific-gyre/2012-07-03</code>,
+and uses <code class="highlighter-rouge">cat stats-NENE01729B.txt</code>
+to examine one of the output files.
+It looks good,
+so she decides to get some coffee and catch up on her reading.</p>
+
+<blockquote class="callout">
+  <h2 id="those-who-know-history-can-choose-to-repeat-it">Those Who Know History Can Choose to Repeat It</h2>
+
+  <p>Another way to repeat previous work is to use the <code class="highlighter-rouge">history</code> command to
+get a list of the last few hundred commands that have been executed, and
+then to use <code class="highlighter-rouge">!123</code> (where “123” is replaced by the command number) to
+repeat one of those commands. For example, if Nelle types this:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ history | tail -n 5
+</code></pre>
+  </div>
+  <div class="output highlighter-rouge"><pre class="highlight"><code>  456  ls -l NENE0*.txt
+  457  rm stats-NENE01729B.txt.txt
+  458  bash goostats NENE01729B.txt stats-NENE01729B.txt
+  459  ls -l NENE0*.txt
+  460  history
+</code></pre>
+  </div>
+
+  <p>then she can re-run <code class="highlighter-rouge">goostats</code> on <code class="highlighter-rouge">NENE01729B.txt</code> simply by typing
+<code class="highlighter-rouge">!458</code>.</p>
+</blockquote>
+
+<blockquote class="callout">
+  <h2 id="other-history-commands">Other History Commands</h2>
+
+  <p>There are a number of other shortcut commands for getting at the history.
+Two of the more useful are <code class="highlighter-rouge">!!</code>, which retrieves the immediately
+preceding command (you may or may not find this more convenient than
+plain up-arrow), and <code class="highlighter-rouge">!$</code>, which retrieves the last word of the last
+command.  That’s useful more often than you might expect: after
+<code class="highlighter-rouge">bash goostats NENE01729B.txt stats-NENE01729B.txt</code>, you can type
+<code class="highlighter-rouge">less !$</code> to look at the file <code class="highlighter-rouge">stats-NENE01729B.txt</code>, which is
+quicker than doing up-arrow and editing the command-line.</p>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="variables-in-loops">Variables in Loops</h2>
+
+  <p>Suppose that <code class="highlighter-rouge">ls</code> initially displays:</p>
+
+  <div class="output highlighter-rouge"><pre class="highlight"><code>fructose.dat    glucose.dat   sucrose.dat
+</code></pre>
+  </div>
+
+  <p>What is the output of:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>for datafile in *.dat
+do
+    ls *.dat
+done
+</code></pre>
+  </div>
+
+  <p>Now, what is the output of:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>for datafile in *.dat
+do
+	ls $datafile
+done
+</code></pre>
+  </div>
+
+  <p>Why do these two loops give different outputs?</p>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="saving-to-a-file-in-a-loop---part-one">Saving to a File in a Loop - Part One</h2>
+
+  <p>In the same directory, what is the effect of this loop?</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>for sugar in *.dat
+do
+    echo $sugar
+    cat $sugar &gt; xylose.dat
+done
+</code></pre>
+  </div>
+
+  <ol>
+    <li>Prints <code class="highlighter-rouge">fructose.dat</code>, <code class="highlighter-rouge">glucose.dat</code>, and <code class="highlighter-rouge">sucrose.dat</code>, and the text from <code class="highlighter-rouge">sucrose.dat</code> will be saved to a file called <code class="highlighter-rouge">xylose.dat</code>.</li>
+    <li>Prints <code class="highlighter-rouge">fructose.dat</code>, <code class="highlighter-rouge">glucose.dat</code>, and <code class="highlighter-rouge">sucrose.dat</code>, and the text from all three files would be
+concatenated and saved to a file called <code class="highlighter-rouge">xylose.dat</code>.</li>
+    <li>Prints <code class="highlighter-rouge">fructose.dat</code>, <code class="highlighter-rouge">glucose.dat</code>, <code class="highlighter-rouge">sucrose.dat</code>, and
+<code class="highlighter-rouge">xylose.dat</code>, and the text from <code class="highlighter-rouge">sucrose.dat</code> will be saved to a file called <code class="highlighter-rouge">xylose.dat</code>.</li>
+    <li>None of the above.</li>
+  </ol>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="saving-to-a-file-in-a-loop---part-two">Saving to a File in a Loop - Part Two</h2>
+
+  <p>In another directory, where <code class="highlighter-rouge">ls</code> returns:</p>
+
+  <div class="output highlighter-rouge"><pre class="highlight"><code>fructose.dat    glucose.dat   sucrose.dat   maltose.txt
+</code></pre>
+  </div>
+
+  <p>What would be the output of the following loop?</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>for datafile in *.dat
+do
+    cat $datafile &gt;&gt; sugar.dat
+done
+</code></pre>
+  </div>
+
+  <ol>
+    <li>All of the text from <code class="highlighter-rouge">fructose.dat</code>, <code class="highlighter-rouge">glucose.dat</code> and <code class="highlighter-rouge">sucrose.dat</code> would be
+concatenated and saved to a file called <code class="highlighter-rouge">sugar.dat</code>.</li>
+    <li>The text from <code class="highlighter-rouge">sucrose.dat</code> will be saved to a file called <code class="highlighter-rouge">sugar.dat</code>.</li>
+    <li>All of the text from <code class="highlighter-rouge">fructose.dat</code>, <code class="highlighter-rouge">glucose.dat</code>, <code class="highlighter-rouge">sucrose.dat</code> and <code class="highlighter-rouge">maltose.txt</code>
+would be concatenated and saved to a file called <code class="highlighter-rouge">sugar.dat</code>.</li>
+    <li>All of the text from <code class="highlighter-rouge">fructose.dat</code>, <code class="highlighter-rouge">glucose.dat</code> and <code class="highlighter-rouge">sucrose.dat</code> would be printed
+to the screen and saved to a file called <code class="highlighter-rouge">sugar.dat</code></li>
+  </ol>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="limiting-sets-of-files">Limiting Sets of Files</h2>
+
+  <p>In the same directory, where <code class="highlighter-rouge">ls</code> returns (without the <code class="highlighter-rouge">sugar.dat</code> file):</p>
+
+  <div class="output highlighter-rouge"><pre class="highlight"><code>fructose.dat    glucose.dat   sucrose.dat   maltose.txt
+</code></pre>
+  </div>
+
+  <p>What would be the output of the following loop?</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>for filename in s*
+do
+    ls $filename 
+done
+</code></pre>
+  </div>
+
+  <ol>
+    <li>No files are listed.</li>
+    <li>All files are listed.</li>
+    <li>Only <code class="highlighter-rouge">fructose.dat</code>, <code class="highlighter-rouge">glucose.dat</code> and <code class="highlighter-rouge">maltose.txt</code> are listed.</li>
+    <li>Only <code class="highlighter-rouge">sucrose.dat</code> is listed.</li>
+  </ol>
+
+  <p>How would the output differ from using this command instead?</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>for filename in *s*
+do
+    ls $filename 
+done
+</code></pre>
+  </div>
+
+  <ol>
+    <li>The same files would be listed.</li>
+    <li>All the files are listed this time.</li>
+    <li>No files are listed this time.</li>
+    <li>The file <code class="highlighter-rouge">sucrose.dat</code> will be listed twice, with the other files listed once each.</li>
+  </ol>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="doing-a-dry-run">Doing a Dry Run</h2>
+
+  <p>A loop is a way to do many things at once — or to make many mistakes at
+once if it does the wrong thing. One way to check what a loop <em>would</em> do
+is to echo the commands it would run instead of actually running them.</p>
+
+  <p>Suppose we want to preview the commands the following loop will execute
+without actually running those commands:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>for file in *.dat
+do
+  analyze $file &gt; analyzed-$file
+done
+</code></pre>
+  </div>
+
+  <p>What is the difference between the two loops below, and which one would we
+want to run?</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code># Version 1
+for file in *.dat
+do
+  echo analyze $file &gt; analyzed-$file
+done
+</code></pre>
+  </div>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code># Version 2
+for file in *.dat
+do
+  echo "analyze $file &gt; analyzed-$file"
+done
+</code></pre>
+  </div>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="nested-loops">Nested Loops</h2>
+
+  <p>Suppose we want to set up up a directory structure to organize
+some experiments measuring the growth rate under different sugar
+types <em>and</em> different temperatures.  What would be the
+result of the following code:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>for sugar in fructose glucose sucrose
+do
+    for temperature in 25 30 37 40
+    do
+        mkdir $sugar-$temperature
+    done
+done
+</code></pre>
+  </div>
+</blockquote>
+
+<blockquote class="keypoints">
+  <h2>Key Points</h2>
+  <ul>
+    
+    <li><p>A <code class="highlighter-rouge">for</code> loop repeats commands once for every thing in a list.</p>
+</li>
+    
+    <li><p>Every <code class="highlighter-rouge">for</code> loop needs a variable to refer to the thing it is currently operating on.</p>
+</li>
+    
+    <li><p>Use <code class="highlighter-rouge">$name</code> to expand a variable (i.e., get its value). <code class="highlighter-rouge">${name}</code> can also be used.</p>
+</li>
+    
+    <li><p>Do not use spaces, quotes, or wildcard characters such as ‘*’ or ‘?’ in filenames, as it complicates variable expansion.</p>
+</li>
+    
+    <li><p>Give files consistent names that are easy to match with wildcard patterns to make it easy to select them for looping.</p>
+</li>
+    
+    <li><p>Use the up-arrow key to scroll up through previous commands to edit and repeat them.</p>
+</li>
+    
+    <li><p>Use <code class="highlighter-rouge">Ctrl-R</code> to search through the previously entered commands.</p>
+</li>
+    
+    <li><p>Use <code class="highlighter-rouge">history</code> to display recent commands, and <code class="highlighter-rouge">!number</code> to repeat a command by number.</p>
+</li>
+    
+  </ul>
+</blockquote>
+
+
+
+
+
+<div class="row">
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../04-pipefilter/"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span><span class="sr-only">previous episode</span></a>
+      
+    </h3>
+  </div>
+  <div class="col-md-10">
+    
+  </div>
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../06-script/"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span><span class="sr-only">next episode</span></a>
+      
+    </h3>
+  </div>
+</div>
+
+
+      
+      <footer>
+  <div class="row">
+    <div class="col-md-6" align="left">
+      <h4>
+	Copyright &copy; 2016
+	<a href="https://software-carpentry.org">Software Carpentry Foundation</a>
+	
+      </h4>
+    </div>
+    <div class="col-md-6" align="right">
+      <h4>
+	<a href="/">Source</a>
+	/
+	<a href="/blob/gh-pages/CONTRIBUTING.md">Contributing</a>
+	/
+	<a href="mailto:lessons@software-carpentry.org">Contact</a>
+      </h4>
+    </div>
+  </div>
+</footer>
+
+      
+    </div>
+    <script src="../assets/js/jquery.min.js"></script>
+<script src="../assets/js/bootstrap.min.js"></script>
+<script src="../assets/js/lesson.js"></script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-37305346-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>
