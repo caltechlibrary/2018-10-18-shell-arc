@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="last-modified" content="2017-08-04 00:24:54 +0200">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- meta "search-domain" used for google site search function google_search() -->
+    <meta name="search-domain" value="/swc-releases/2017.08/shell-novice">
+    <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/lesson.css" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon-swc.ico" />
+    
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+    <title>The Unix Shell: Finding Things</title>
+  </head>
+  <body>
+    <div class="container">
+      
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      
+      
+
+      
+      <a class="navbar-brand" href="../">Home</a>
+
+    </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+
+	
+        <li><a href="../conduct/">Code of Conduct</a></li>
+
+	
+        
+        <li><a href="../setup/">Setup</a></li>
+        <li class="dropdown">
+          <a href="../" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Episodes <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            
+            <li><a href="../01-intro/">Introducing the Shell</a></li>
+            
+            <li><a href="../02-filedir/">Navigating Files and Directories</a></li>
+            
+            <li><a href="../03-create/">Working With Files and Directories</a></li>
+            
+            <li><a href="../04-pipefilter/">Pipes and Filters</a></li>
+            
+            <li><a href="../05-loop/">Loops</a></li>
+            
+            <li><a href="../06-script/">Shell Scripts</a></li>
+            
+            <li><a href="../07-find/">Finding Things</a></li>
+            
+	    <li role="separator" class="divider"></li>
+            <li><a href="../aio/">All in one page (Beta)</a></li>
+          </ul>
+        </li>
+	
+
+	
+	
+        <li class="dropdown">
+          <a href="../" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Extras <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="../reference/">Reference</a></li>
+            
+            <li><a href="../about/">About</a></li>
+            
+            <li><a href="../discuss/">Discussion</a></li>
+            
+            <li><a href="../figures/">Figures</a></li>
+            
+            <li><a href="../guide/">Instructor Notes</a></li>
+            
+          </ul>
+        </li>
+	
+
+	
+        <li><a href="../license/">License</a></li>
+	
+	<li><a href="/edit/gh-pages/_episodes/07-find.md">Improve this page <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></li>
+	
+      </ul>
+      <form class="navbar-form navbar-right" role="search" id="search" onsubmit="google_search(); return false;">
+        <div class="form-group">
+          <input type="text" id="google-search" placeholder="Search..." aria-label="Google site search">
+        </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+
+<div class="row">
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../06-script/"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span><span class="sr-only">previous episode</span></a>
+      
+    </h3>
+  </div>
+  <div class="col-md-10">
+    
+    <h3 class="maintitle"><a href="../">The Unix Shell</a></h3>
+    
+  </div>
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span><span class="sr-only">lesson home</span></a>
+      
+    </h3>
+  </div>
+</div>
+
+<article>
+<div class="row">
+  <div class="col-md-1">
+  </div>
+  <div class="col-md-10">
+    <h1 class="maintitle">Finding Things</h1>
+  </div>
+  <div class="col-md-1">
+  </div>
+</div>
+
+
+<blockquote class="objectives">
+  <h2>Overview</h2>
+
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Teaching:</strong> 15 min
+      <br/>
+      <strong>Exercises:</strong> 0 min
+    </div>
+    <div class="col-md-9">
+      <strong>Questions</strong>
+      <ul>
+	
+	<li><p>How can I find files?</p>
+</li>
+	
+	<li><p>How can I find things in files?</p>
+</li>
+	
+      </ul>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-9">
+      <strong>Objectives</strong>
+      <ul>
+	
+	<li><p>Use <code class="highlighter-rouge">grep</code> to select lines from text files that match simple patterns.</p>
+</li>
+	
+	<li><p>Use <code class="highlighter-rouge">find</code> to find files whose names match simple patterns.</p>
+</li>
+	
+	<li><p>Use the output of one command as the command-line parameters to another command.</p>
+</li>
+	
+	<li><p>Explain what is meant by ‘text’ and ‘binary’ files, and why many common tools don’t handle the latter well.</p>
+</li>
+	
+      </ul>
+    </div>
+  </div>
+
+</blockquote>
+
+<p>In the same way that many of us now use “Google” as a 
+verb meaning “to find”, Unix programmers often use the 
+word “grep”.
+“grep” is a contraction of “global/regular expression/print”,
+a common sequence of operations in early Unix text editors.
+It is also the name of a very useful command-line program.</p>
+
+<p><code class="highlighter-rouge">grep</code> finds and prints lines in files that match a pattern.
+For our examples,
+we will use a file that contains three haikus taken from a
+1998 competition in <em>Salon</em> magazine. For this set of examples,
+we’re going to be working in the writing subdirectory:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ cd
+$ cd writing
+$ cat haiku.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>The Tao that is seen
+Is not the true Tao, until
+You bring fresh toner.
+
+With searching comes loss
+and the presence of absence:
+"My Thesis" not found.
+
+Yesterday it worked
+Today it is not working
+Software is like that.
+</code></pre>
+</div>
+
+<blockquote class="callout">
+  <h2 id="forever-or-five-years">Forever, or Five Years</h2>
+
+  <p>We haven’t linked to the original haikus because they don’t appear to be on <em>Salon</em>’s site any longer.
+As <a href="http://www.clir.org/pubs/archives/ensuring.pdf">Jeff Rothenberg said</a>,
+“Digital information lasts forever — or five years, whichever comes first.”</p>
+</blockquote>
+
+<p>Let’s find lines that contain the word “not”:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ grep not haiku.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>Is not the true Tao, until
+"My Thesis" not found
+Today it is not working
+</code></pre>
+</div>
+
+<p>Here, <code class="highlighter-rouge">not</code> is the pattern we’re searching for. The grep command searches through the file, looking for matches to the pattern specified. To use it type grep, then the pattern we’re searching for and finally the name of the file (or files) we’re searching in.</p>
+
+<p>The output is the three lines in the file that contain the letters “not”.</p>
+
+<p>Let’s try a different pattern: “The”.</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ grep The haiku.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>The Tao that is seen
+"My Thesis" not found.
+</code></pre>
+</div>
+
+<p>This time,
+two lines that include the letters “The” are outputted.
+However, one instance of those letters is contained within a larger word,
+“Thesis”.</p>
+
+<p>To restrict matches to lines containing the word “The” on its own,
+we can give <code class="highlighter-rouge">grep</code> with the <code class="highlighter-rouge">-w</code> flag.
+This will limit matches to word boundaries.</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ grep -w The haiku.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>The Tao that is seen
+</code></pre>
+</div>
+
+<p>Note that a “word boundary” includes the start and end of a line, so not
+just letters surrounded by spaces. 
+Sometimes we don’t
+want to search for a single word, but a phrase. This is also easy to do with
+<code class="highlighter-rouge">grep</code> by putting the phrase in quotes.</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ grep -w "is not" haiku.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>Today it is not working
+</code></pre>
+</div>
+
+<p>We’ve now seen that you don’t have to have quotes around single words,
+but it is useful to use quotes when searching for multiple words.
+It also helps to make it easier to distinguish between the search term or phrase
+and the file being searched.
+We will use quotes in the remaining examples.</p>
+
+<p>Another useful option is <code class="highlighter-rouge">-n</code>, which numbers the lines that match:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ grep -n "it" haiku.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>5:With searching comes loss
+9:Yesterday it worked
+10:Today it is not working
+</code></pre>
+</div>
+
+<p>Here, we can see that lines 5, 9, and 10 contain the letters “it”.</p>
+
+<p>We can combine options (i.e. flags) as we do with other Unix commands.
+For example, let’s find the lines that contain the word “the”. We can combine
+the option <code class="highlighter-rouge">-w</code> to find the lines that contain the word “the” and <code class="highlighter-rouge">-n</code> to number the lines that match:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ grep -n -w "the" haiku.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>2:Is not the true Tao, until
+6:and the presence of absence:
+</code></pre>
+</div>
+
+<p>Now we want to use the option <code class="highlighter-rouge">-i</code> to make our search case-insensitive:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ grep -n -w -i "the" haiku.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>1:The Tao that is seen
+2:Is not the true Tao, until
+6:and the presence of absence:
+</code></pre>
+</div>
+
+<p>Now, we want to use the option <code class="highlighter-rouge">-v</code> to invert our search, i.e., we want to output
+the lines that do not contain the word “the”.</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ grep -n -w -v "the" haiku.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>1:The Tao that is seen
+3:You bring fresh toner.
+4:
+5:With searching comes loss
+7:"My Thesis" not found.
+8:
+9:Yesterday it worked
+10:Today it is not working
+11:Software is like that.
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">grep</code> has lots of other options. To find out what they are, we can type:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ grep --help
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>Usage: grep [OPTION]... PATTERN [FILE]...
+Search for PATTERN in each FILE or standard input.
+PATTERN is, by default, a basic regular expression (BRE).
+Example: grep -i 'hello world' menu.h main.c
+
+Regexp selection and interpretation:
+  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)
+  -F, --fixed-strings       PATTERN is a set of newline-separated fixed strings
+  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)
+  -P, --perl-regexp         PATTERN is a Perl regular expression
+  -e, --regexp=PATTERN      use PATTERN for matching
+  -f, --file=FILE           obtain PATTERN from FILE
+  -i, --ignore-case         ignore case distinctions
+  -w, --word-regexp         force PATTERN to match only whole words
+  -x, --line-regexp         force PATTERN to match only whole lines
+  -z, --null-data           a data line ends in 0 byte, not newline
+
+Miscellaneous:
+...        ...        ...
+</code></pre>
+</div>
+
+<blockquote class="callout">
+  <h2 id="wildcards">Wildcards</h2>
+
+  <p><code class="highlighter-rouge">grep</code>’s real power doesn’t come from its options, though; it comes from
+the fact that patterns can include wildcards. (The technical name for
+these is <strong>regular expressions</strong>, which
+is what the “re” in “grep” stands for.) Regular expressions are both complex
+and powerful; if you want to do complex searches, please look at the lesson
+on <a href="http://v4.software-carpentry.org/regexp/index.html">our website</a>. As a taster, we can
+find lines that have an ‘o’ in the second position like this:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>$ grep -E '^.o' haiku.txt
+</code></pre>
+  </div>
+
+  <div class="output highlighter-rouge"><pre class="highlight"><code>You bring fresh toner.
+Today it is not working
+Software is like that.
+</code></pre>
+  </div>
+
+  <p>We use the <code class="highlighter-rouge">-E</code> flag and put the pattern in quotes to prevent the shell
+from trying to interpret it. (If the pattern contained a <code class="highlighter-rouge">*</code>, for
+example, the shell would try to expand it before running <code class="highlighter-rouge">grep</code>.) The
+<code class="highlighter-rouge">^</code> in the pattern anchors the match to the start of the line. The <code class="highlighter-rouge">.</code>
+matches a single character (just like <code class="highlighter-rouge">?</code> in the shell), while the <code class="highlighter-rouge">o</code>
+matches an actual ‘o’.</p>
+</blockquote>
+
+<p>While <code class="highlighter-rouge">grep</code> finds lines in files,
+the <code class="highlighter-rouge">find</code> command finds files themselves.
+Again,
+it has a lot of options;
+to show how the simplest ones work, we’ll use the directory tree shown below.</p>
+
+<p><img src="../fig/find-file-tree.svg" alt="File Tree for Find Example" /></p>
+
+<p>Nelle’s <code class="highlighter-rouge">writing</code> directory contains one file called <code class="highlighter-rouge">haiku.txt</code> and four subdirectories:
+<code class="highlighter-rouge">thesis</code> (which contains a sadly empty file, <code class="highlighter-rouge">empty-draft.md</code>),
+<code class="highlighter-rouge">data</code> (which contains two files <code class="highlighter-rouge">one.txt</code> and <code class="highlighter-rouge">two.txt</code>),
+a <code class="highlighter-rouge">tools</code> directory that contains the programs <code class="highlighter-rouge">format</code> and <code class="highlighter-rouge">stats</code>,
+and a subdirectory called <code class="highlighter-rouge">old</code>, with a file <code class="highlighter-rouge">oldtool</code>.</p>
+
+<p>For our first command,
+let’s run <code class="highlighter-rouge">find .</code>.</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ find .
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>.
+./old
+./old/.gitkeep
+./data
+./data/one.txt
+./data/two.txt
+./tools
+./tools/format
+./tools/old
+./tools/old/oldtool
+./tools/stats
+./haiku.txt
+./thesis
+./thesis/empty-draft.md
+</code></pre>
+</div>
+
+<p>As always,
+the <code class="highlighter-rouge">.</code> on its own means the current working directory,
+which is where we want our search to start.
+<code class="highlighter-rouge">find</code>’s output is the names of every file <strong>and</strong> directory
+under the current working directory.
+This can seem useless at first but <code class="highlighter-rouge">find</code> has many options
+to filter the output and in this lesson we will discover some 
+of them.</p>
+
+<p>The first option in our list is
+<code class="highlighter-rouge">-type d</code> that means “things that are directories”.
+Sure enough,
+<code class="highlighter-rouge">find</code>’s output is the names of the six directories in our little tree
+(including <code class="highlighter-rouge">.</code>):</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ find . -type d
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>./
+./old
+./data
+./thesis
+./tools
+./tools/old
+</code></pre>
+</div>
+
+<p>Notice that the objects <code class="highlighter-rouge">find</code> finds are not listed in any particular order.
+If we change <code class="highlighter-rouge">-type d</code> to <code class="highlighter-rouge">-type f</code>,
+we get a listing of all the files instead:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ find . -type f
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>./haiku.txt
+./tools/stats
+./tools/old/oldtool
+./tools/format
+./thesis/empty-draft.md
+./data/one.txt
+./data/two.txt
+</code></pre>
+</div>
+
+<p>Now let’s try matching by name:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ find . -name *.txt
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>./haiku.txt
+</code></pre>
+</div>
+
+<p>We expected it to find all the text files,
+but it only prints out <code class="highlighter-rouge">./haiku.txt</code>.
+The problem is that the shell expands wildcard characters like <code class="highlighter-rouge">*</code> <em>before</em> commands run.
+Since <code class="highlighter-rouge">*.txt</code> in the current directory expands to <code class="highlighter-rouge">haiku.txt</code>,
+the command we actually ran was:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ find . -name haiku.txt
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">find</code> did what we asked; we just asked for the wrong thing.</p>
+
+<p>To get what we want,
+let’s do what we did with <code class="highlighter-rouge">grep</code>:
+put <code class="highlighter-rouge">*.txt</code> in single quotes to prevent the shell from expanding the <code class="highlighter-rouge">*</code> wildcard.
+This way,
+<code class="highlighter-rouge">find</code> actually gets the pattern <code class="highlighter-rouge">*.txt</code>, not the expanded filename <code class="highlighter-rouge">haiku.txt</code>:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ find . -name '*.txt'
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>./data/one.txt
+./data/two.txt
+./haiku.txt
+</code></pre>
+</div>
+
+<blockquote class="callout">
+  <h2 id="listing-vs-finding">Listing vs. Finding</h2>
+
+  <p><code class="highlighter-rouge">ls</code> and <code class="highlighter-rouge">find</code> can be made to do similar things given the right options,
+but under normal circumstances,
+<code class="highlighter-rouge">ls</code> lists everything it can,
+while <code class="highlighter-rouge">find</code> searches for things with certain properties and shows them.</p>
+</blockquote>
+
+<p>As we said earlier,
+the command line’s power lies in combining tools.
+We’ve seen how to do that with pipes;
+let’s look at another technique.
+As we just saw,
+<code class="highlighter-rouge">find . -name '*.txt'</code> gives us a list of all text files in or below the current directory.
+How can we combine that with <code class="highlighter-rouge">wc -l</code> to count the lines in all those files?</p>
+
+<p>The simplest way is to put the <code class="highlighter-rouge">find</code> command inside <code class="highlighter-rouge">$()</code>:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ wc -l $(find . -name '*.txt')
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>11 ./haiku.txt
+300 ./data/two.txt
+70 ./data/one.txt
+381 total
+</code></pre>
+</div>
+
+<p>When the shell executes this command,
+the first thing it does is run whatever is inside the <code class="highlighter-rouge">$()</code>.
+It then replaces the <code class="highlighter-rouge">$()</code> expression with that command’s output.
+Since the output of <code class="highlighter-rouge">find</code> is the three filenames <code class="highlighter-rouge">./data/one.txt</code>, <code class="highlighter-rouge">./data/two.txt</code>, and <code class="highlighter-rouge">./haiku.txt</code>,
+the shell constructs the command:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ wc -l ./data/one.txt ./data/two.txt ./haiku.txt
+</code></pre>
+</div>
+
+<p>which is what we wanted.
+This expansion is exactly what the shell does when it expands wildcards like <code class="highlighter-rouge">*</code> and <code class="highlighter-rouge">?</code>,
+but lets us use any command we want as our own “wildcard”.</p>
+
+<p>It’s very common to use <code class="highlighter-rouge">find</code> and <code class="highlighter-rouge">grep</code> together.
+The first finds files that match a pattern;
+the second looks for lines inside those files that match another pattern.
+Here, for example, we can find PDB files that contain iron atoms
+by looking for the string “FE” in all the <code class="highlighter-rouge">.pdb</code> files above the current directory:</p>
+
+<div class="bash highlighter-rouge"><pre class="highlight"><code>$ grep "FE" $(find .. -name '*.pdb')
+</code></pre>
+</div>
+
+<div class="output highlighter-rouge"><pre class="highlight"><code>../data/pdb/heme.pdb:ATOM     25 FE           1      -0.924   0.535  -0.518
+</code></pre>
+</div>
+
+<blockquote class="callout">
+  <h2 id="binary-files">Binary Files</h2>
+
+  <p>We have focused exclusively on finding things in text files. What if
+your data is stored as images, in databases, or in some other format?
+One option would be to extend tools like <code class="highlighter-rouge">grep</code> to handle those formats.
+This hasn’t happened, and probably won’t, because there are too many
+formats to support.</p>
+
+  <p>The second option is to convert the data to text, or extract the
+text-ish bits from the data. This is probably the most common approach,
+since it only requires people to build one tool per data format (to
+extract information). On the one hand, it makes simple things easy to
+do. On the negative side, complex things are usually impossible. For
+example, it’s easy enough to write a program that will extract X and Y
+dimensions from image files for <code class="highlighter-rouge">grep</code> to play with, but how would you
+write something to find values in a spreadsheet whose cells contained
+formulas?</p>
+
+  <p>The third choice is to recognize that the shell and text processing have
+their limits, and to use another programming language.
+When the time comes to do this, don’t be too hard on the shell: many
+modern programming languages have borrowed a lot of
+ideas from it, and imitation is also the sincerest form of praise.</p>
+</blockquote>
+
+<p>The Unix shell is older than most of the people who use it. It has
+survived so long because it is one of the most productive programming
+environments ever created — maybe even <em>the</em> most productive. Its syntax
+may be cryptic, but people who have mastered it can experiment with
+different commands interactively, then use what they have learned to
+automate their work. Graphical user interfaces may be better at the
+first, but the shell is still unbeaten at the second. And as Alfred
+North Whitehead wrote in 1911, “Civilization advances by extending the
+number of important operations which we can perform without thinking
+about them.”</p>
+
+<blockquote class="challenge">
+  <h2 id="using-grep">Using <code class="highlighter-rouge">grep</code></h2>
+
+  <p>Referring to <code class="highlighter-rouge">haiku.txt</code>
+presented at the begin of this topic,
+which command would result in the following output:</p>
+
+  <div class="output highlighter-rouge"><pre class="highlight"><code>and the presence of absence:
+</code></pre>
+  </div>
+
+  <ol>
+    <li><code class="highlighter-rouge">grep "of" haiku.txt</code></li>
+    <li><code class="highlighter-rouge">grep -E "of" haiku.txt</code></li>
+    <li><code class="highlighter-rouge">grep -w "of" haiku.txt</code></li>
+    <li><code class="highlighter-rouge">grep -i "of" haiku.txt</code></li>
+  </ol>
+
+  <blockquote class="solution">
+    <h2 id="solution">Solution</h2>
+    <p>The correct answer is 3, because the <code class="highlighter-rouge">-w</code> flag looks only for whole-word matches.
+The other options will all match “of” when part of another word.</p>
+  </blockquote>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="find-pipeline-reading-comprehension"><code class="highlighter-rouge">find</code> Pipeline Reading Comprehension</h2>
+
+  <p>Write a short explanatory comment for the following shell script:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>wc -l $(find . -name '*.dat') | sort -n
+</code></pre>
+  </div>
+
+  <blockquote class="solution">
+    <h2 id="solution-1">Solution</h2>
+    <ol>
+      <li>Find all files with a <code class="highlighter-rouge">.dat</code> extension in the current directory</li>
+      <li>Count the number of lines each of these files contains</li>
+      <li>Sort the output from step 2. numerically</li>
+    </ol>
+  </blockquote>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="matching-and-subtracting">Matching and Subtracting</h2>
+
+  <p>The <code class="highlighter-rouge">-v</code> flag to <code class="highlighter-rouge">grep</code> inverts pattern matching, so that only lines
+which do <em>not</em> match the pattern are printed. Given that, which of
+the following commands will find all files in <code class="highlighter-rouge">/data</code> whose names
+end in <code class="highlighter-rouge">s.txt</code> (e.g., <code class="highlighter-rouge">animals.txt</code> or <code class="highlighter-rouge">planets.txt</code>), but do
+<em>not</em> contain the word <code class="highlighter-rouge">net</code>?
+Once you have thought about your answer, you can test the commands in the <code class="highlighter-rouge">data-shell</code>
+directory.</p>
+
+  <ol>
+    <li><code class="highlighter-rouge">find data -name '*s.txt' | grep -v net</code></li>
+    <li><code class="highlighter-rouge">find data -name *s.txt | grep -v net</code></li>
+    <li><code class="highlighter-rouge">grep -v "temp" $(find data -name '*s.txt')</code></li>
+    <li>None of the above.</li>
+  </ol>
+
+  <blockquote class="solution">
+    <h2 id="solution-2">Solution</h2>
+    <p>The correct answer is 1. Putting the match expression in quotes prevents the shell
+expanding it, so it gets passed to the <code class="highlighter-rouge">find</code> command.</p>
+
+    <p>Option 2 is incorrect because the shell expands <code class="highlighter-rouge">*s.txt</code> instead of passing the wildcard
+expression to <code class="highlighter-rouge">find</code>.</p>
+
+    <p>Option 3 is incorrect because it searches the contents of the files for lines which
+do not match “temp”, rather than searching the file names.</p>
+  </blockquote>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="tracking-a-species">Tracking a Species</h2>
+
+  <p>Leah has several hundred 
+data files saved in one directory, each of which is formatted like this:</p>
+
+  <div class="source highlighter-rouge"><pre class="highlight"><code>2013-11-05,deer,5
+2013-11-05,rabbit,22
+2013-11-05,raccoon,7
+2013-11-06,rabbit,19
+2013-11-06,deer,2
+</code></pre>
+  </div>
+
+  <p>She wants to write a shell script that takes a species as the first command-line argument 
+and a directory as the second argument. The script should return one file called <code class="highlighter-rouge">species.txt</code> 
+containing a list of dates and the number of that species seen on each date.
+For example using the data shown above, <code class="highlighter-rouge">rabbits.txt</code> would contain:</p>
+
+  <div class="source highlighter-rouge"><pre class="highlight"><code>2013-11-05,22
+2013-11-06,19
+</code></pre>
+  </div>
+
+  <p>Put these commands and pipes in the right order to achieve this:</p>
+
+  <div class="bash highlighter-rouge"><pre class="highlight"><code>cut -d : -f 2  
+&gt;  
+|  
+grep -w $1 -r $2  
+|  
+$1.txt  
+cut -d , -f 1,3  
+</code></pre>
+  </div>
+
+  <p>Hint: use <code class="highlighter-rouge">man grep</code> to look for how to grep text recursively in a directory
+and <code class="highlighter-rouge">man cut</code> to select more than one field in a line.</p>
+
+  <p>An example of such a file is provided in <code class="highlighter-rouge">data-shell/data/animal-counts/animals.txt</code></p>
+
+  <blockquote class="solution">
+    <h2 id="solution-3">Solution</h2>
+
+    <div class="source highlighter-rouge"><pre class="highlight"><code>grep -w $1 -r $2 | cut -d : -f 2 | cut -d , -f 1,3  &gt; $1.txt
+</code></pre>
+    </div>
+
+    <p>You would call the script above like this:</p>
+
+    <div class="bash highlighter-rouge"><pre class="highlight"><code>$ bash count-species.sh bear .
+</code></pre>
+    </div>
+  </blockquote>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="little-women">Little Women</h2>
+
+  <p>You and your friend, having just finished reading <em>Little Women</em> by
+Louisa May Alcott, are in an argument.  Of the four sisters in the
+book, Jo, Meg, Beth, and Amy, your friend thinks that Jo was the
+most mentioned.  You, however, are certain it was Amy.  Luckily, you
+have a file <code class="highlighter-rouge">LittleWomen.txt</code> containing the full text of the novel
+(<code class="highlighter-rouge">data-shell/writing/data/LittleWomen.txt</code>).
+Using a <code class="highlighter-rouge">for</code> loop, how would you tabulate the number of times each
+of the four sisters is mentioned?</p>
+
+  <p>Hint: one solution might employ
+the commands <code class="highlighter-rouge">grep</code> and <code class="highlighter-rouge">wc</code> and a <code class="highlighter-rouge">|</code>, while another might utilize
+<code class="highlighter-rouge">grep</code> options.
+There is often more than one way to solve a programming task, so a
+particular solution is usually chosen based on a combination of
+yielding the correct result, elegance, readability, and speed.</p>
+
+  <blockquote class="solution">
+    <h2 id="solutions">Solutions</h2>
+    <div class="source highlighter-rouge"><pre class="highlight"><code>for sis in Jo Meg Beth Amy
+do
+	echo $sis:
+	grep -ow $sis littlewomen.txt | wc -l
+done
+</code></pre>
+    </div>
+
+    <p>Alternative, slightly inferior solution:</p>
+    <div class="source highlighter-rouge"><pre class="highlight"><code>for sis in Jo Meg Beth Amy
+do
+	echo $sis:
+	grep -ocw $sis LittleWomen.txt
+done
+</code></pre>
+    </div>
+
+    <p>This solution is inferior because <code class="highlighter-rouge">grep -c</code> only reports the number of lines matched.
+The total number of matches reported by this method will be lower if there is more
+than one match per line.</p>
+  </blockquote>
+</blockquote>
+
+<blockquote class="challenge">
+  <h2 id="finding-files-with-different-properties">Finding Files With Different Properties</h2>
+
+  <p>The <code class="highlighter-rouge">find</code> command can be given several other criteria known as “tests”
+to locate files with specific attributes, such as creation time, size,
+permissions, or ownership.  Use <code class="highlighter-rouge">man find</code> to explore these, and then
+write a single command to find all files in or below the current directory
+that were modified by the user <code class="highlighter-rouge">ahmed</code> in the last 24 hours.</p>
+
+  <p>Hint 1: you will need to use three tests: <code class="highlighter-rouge">-type</code>, <code class="highlighter-rouge">-mtime</code>, and <code class="highlighter-rouge">-user</code>.</p>
+
+  <p>Hint 2: The value for <code class="highlighter-rouge">-mtime</code> will need to be negative—why?</p>
+
+  <blockquote class="solution">
+    <h2 id="solution-4">Solution</h2>
+    <p>Assuming that Nelle’s home is our working directory we type:</p>
+
+    <div class="bash highlighter-rouge"><pre class="highlight"><code>$ find ./ -type f -mtime -1 -user ahmed
+</code></pre>
+    </div>
+  </blockquote>
+</blockquote>
+
+
+<blockquote class="keypoints">
+  <h2>Key Points</h2>
+  <ul>
+    
+    <li><p><code class="highlighter-rouge">find</code> finds files with specific properties that match patterns.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">grep</code> selects lines in files that match patterns.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">--help</code> is a flag supported by many bash commands, and programs that can be run from within Bash, to display more information on how to use these commands or programs.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">man command</code> displays the manual page for a given command.</p>
+</li>
+    
+    <li><p><code class="highlighter-rouge">$(command)</code> inserts a command’s output in place.</p>
+</li>
+    
+  </ul>
+</blockquote>
+
+</article>
+
+<div class="row">
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../06-script/"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span><span class="sr-only">previous episode</span></a>
+      
+    </h3>
+  </div>
+  <div class="col-md-10">
+    
+  </div>
+  <div class="col-md-1">
+    <h3>
+      
+      <a href="../"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span><span class="sr-only">lesson home</span></a>
+      
+    </h3>
+  </div>
+</div>
+
+
+      
+      
+<footer>
+  <div class="row">
+    <div class="col-md-6" align="left">
+      <h4>
+	Copyright &copy; 2016–2017
+	
+	<a href="https://software-carpentry.org">Software Carpentry Foundation</a>
+	
+      </h4>
+    </div>
+    <div class="col-md-6" align="right">
+      <h4>
+	
+	<a href="/edit/gh-pages/_episodes/07-find.md">Edit on GitHub</a>
+	
+	/
+	<a href="/blob/gh-pages/CONTRIBUTING.md">Contributing</a>
+	/
+	<a href="/">Source</a>
+	/
+	<a href="/blob/gh-pages/CITATION">Cite</a>
+	/
+	<a href="">Contact</a>
+      </h4>
+    </div>
+  </div>
+</footer>
+
+      
+    </div>
+    
+<script src="../assets/js/jquery.min.js"></script>
+<script src="../assets/js/bootstrap.min.js"></script>
+<script src="../assets/js/lesson.js"></script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-37305346-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+  </body>
+</html>
