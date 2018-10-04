@@ -27,7 +27,7 @@ but make no mistake:
 these are actually small programs.
 
 Let's start by going back to `molecules/` and creating a new file, `middle.sh` which will
-become our shell script:
+become the shell script:
 
 ~~~
 $ cd molecules
