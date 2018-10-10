@@ -26,24 +26,85 @@ a bunch of commands saved in a file is usually called a **shell script**,
 but make no mistake:
 these are actually small programs.
 
-Let's start by going back to `molecules/` and creating a new file, `middle.sh` which will
+Let's start by going back to `not-downloads/` and creating a new file, `cleanup.sh` which will
 become the shell script:
 
 ~~~
-$ cd molecules
-$ nano middle.sh
+$ cd not-downloads
+$ nano cleanup.sh
 ~~~
 {: .language-bash}
 
-The command `nano middle.sh` opens the file `middle.sh` within the text editor "nano"
+The command `nano cleanup.sh` opens the file `cleanup.sh` within the text editor "nano"
 (which runs within the shell).
 If the file does not exist, it will be created.
-We can use the text editor to directly edit the file -- we'll simply insert the following line:
+
+> ## Which Editor?
+>
+> When we say, "`nano` is a text editor," we really do mean "text": it can
+> only work with plain character data, not tables, images, or any other
+> human-friendly media. We use it in examples because it is one of the 
+> least complex text editors. However, because of this trait, it may 
+> not be powerful enough or flexible enough for the work you need to do
+> after this workshop. On Unix systems (such as Linux and Mac OS X),
+> many programmers use [Emacs](http://www.gnu.org/software/emacs/) or
+> [Vim](http://www.vim.org/) (both of which require more time to learn), 
+> or a graphical editor such as
+> [Gedit](http://projects.gnome.org/gedit/). On Windows, you may wish to
+> use [Notepad++](http://notepad-plus-plus.org/).  Windows also has a built-in
+> editor called `notepad` that can be run from the command line in the same
+> way as `nano` for the purposes of this lesson.  
+>
+> No matter what editor you use, you will need to know where it searches
+> for and saves files. If you start it from the shell, it will (probably)
+> use your current working directory as its default location. If you use
+> your computer's start menu, it may want to save files in your desktop or
+> documents directory instead. You can change this by navigating to
+> another directory the first time you "Save As..."
+{: .callout}
+
+Let's type in a few lines of text.
+Once we're happy with our text, we can press `Ctrl-O` (press the Ctrl or Control key and, while
+holding it down, press the O key) to write our data to disk
+(we'll be asked what file we want to save this to:
+press Return to accept the suggested default of `cleanup.sh`).
+
+![Nano in Action](../fig/nano-screenshot.png)
+
+Once our file is saved, we can use `Ctrl-X` to quit the editor and
+return to the shell.
+
+> ## Control, Ctrl, or ^ Key
+>
+> The Control key is also called the "Ctrl" key. There are various ways
+> in which using the Control key may be described. For example, you may
+> see an instruction to press the Control key and, while holding it down,
+> press the X key, described as any of:
+>
+> * `Control-X`
+> * `Control+X`
+> * `Ctrl-X`
+> * `Ctrl+X`
+> * `^X`
+> * `C-x`
+>
+> In nano, along the bottom of the screen you'll see `^G Get Help ^O WriteOut`.
+> This means that you can use `Control-G` to get help and `Control-O` to save your
+> file.
+{: .callout}
+
+`nano` doesn't leave any output on the screen after it exits,
+but `ls` now shows that we have created a file called `cleanup.sh`:
 
 ~~~
-head -n 15 octane.pdb | tail -n 5
+$ ls cleanup.sh
 ~~~
-{: .source}
+{: .language-bash}
+
+~~~
+cleanup.sh
+~~~
+{: .output}
 
 This is a variation on the pipe we constructed earlier:
 it selects lines 11-15 of the file `octane.pdb`.
