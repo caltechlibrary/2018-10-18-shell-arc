@@ -74,7 +74,7 @@ ls -F
 
 These commands are not going to modify anything yet;
 they simply print the path of the working directory and list the files in it.
-Remember, we are *not* running it as a command just yet:
+Remember, we are *not* running it as a command just yet;
 we are putting the commands in a file.
 
 > ## Comments
@@ -140,7 +140,15 @@ $ bash cleanup.sh
 
 ~~~
 /Users/nelle/Desktop/data-shell
-------------------list of files-------------------
+cleanup.sh                fig_11_09.csv             habitat_03.jpg
+data/                     fig_11_10.csv             humphrey_keeble_1976.pdf
+fig_11_01.csv             finches_01.jpg            lab_notes/
+fig_11_02.csv             finches_02.jpg            lab_notes.zip
+fig_11_03.csv             finches_03.jpg            loewenberg_1965.pdf
+fig_11_04.csv             finches_04.jpg            oldroyd_1984.pdf
+fig_11_05.csv             greenleaf_et_al_1998.pdf  olsen_2017.pdf
+fig_11_07.csv             habitat_01.jpg            readme for fig files.txt
+fig_11_08.csv             habitat_02.jpg            van_leeuwen_2002.pdf
 ~~~
 {: .output}
 
