@@ -26,11 +26,11 @@ a bunch of commands saved in a file is usually called a **shell script**,
 but make no mistake:
 these are actually small programs.
 
-Let's start by going back to `not-downloads/` and creating a new file, `cleanup.sh` which will
+Let's start by going back to `data-shell/` and creating a new file, `cleanup.sh` which will
 become the shell script:
 
 ~~~
-$ cd not-downloads
+$ cd data-shell
 $ nano cleanup.sh
 ~~~
 {: .language-bash}
@@ -63,17 +63,29 @@ If the file does not exist, it will be created.
 > another directory the first time you "Save As..."
 {: .callout}
 
-We can use the text editor to directly edit the file -- we'll simply insert the following line:
+We can use the text editor to directly edit the file -- we'll simply insert the following lines:
 
 ~~~
-ls *.pdf
+# Lines that begin with a '#' are comments.
+pwd
+ls -F
 ~~~
 {: .source}
 
-This command is not going to modify anything yet;
-it simply lists the PDF files in the current directory.
+These commands are not going to modify anything yet;
+they simply print the path of the working directory and list the files in it.
 Remember, we are *not* running it as a command just yet:
 we are putting the commands in a file.
+
+> ## Comments
+>
+> A comment starts with a `#` character and runs to the end of the line.
+> The computer ignores comments,
+> but they're invaluable for helping people (including your future self) understand and use scripts.
+> The only caveat is that each time you modify the script,
+> you should check that the comment is still accurate:
+> an explanation that sends the reader in the wrong direction is worse than none at all.
+{: .callout}
 
 Once we're happy with our text, we can press `Ctrl-O` (press the Ctrl or Control key and, while
 holding it down, press the O key) to write our data to disk
@@ -127,35 +139,10 @@ $ bash cleanup.sh
 {: .language-bash}
 
 ~~~
-------------------list of pdf files-------------------
+/Users/nelle/Desktop/data-shell
+------------------list of files-------------------
 ~~~
 {: .output}
 
 Sure enough,
-our script's output is exactly what we would get if we ran that command directly.
-
-
-
-This works,
-but it may take the next person who reads `middle.sh` a moment to figure out what it does.
-We can improve our script by adding some **comments** at the top:
-
-~~~
-$ nano middle.sh
-~~~
-{: .language-bash}
-
-~~~
-# Select lines from the middle of a file.
-# Usage: bash middle.sh filename end_line num_lines
-head -n "$2" "$1" | tail -n "$3"
-~~~
-{: .output}
-
-A comment starts with a `#` character and runs to the end of the line.
-The computer ignores comments,
-but they're invaluable for helping people (including your future self) understand and use scripts.
-The only caveat is that each time you modify the script,
-you should check that the comment is still accurate:
-an explanation that sends the reader in the wrong direction is worse than none at all.
-
+our script's output is exactly what we would get if we ran those commands directly.
