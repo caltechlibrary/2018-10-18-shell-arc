@@ -206,8 +206,15 @@ $ ls -F Desktop/data-shell
 {: .language-bash}
 
 ~~~
-creatures/          molecules/          notes.txt           solar.pdf
-data/               north-pacific-gyre/ pizza.cfg           writing/
+data/                     fig_11_10.csv             humphrey_keeble_1976.pdf
+fig_11_01.csv             finches_01.jpg            lab_notes/
+fig_11_02.csv             finches_02.jpg            lab_notes.zip
+fig_11_03.csv             finches_03.jpg            loewenberg_1965.pdf
+fig_11_04.csv             finches_04.jpg            oldroyd_1984.pdf
+fig_11_05.csv             greenleaf_et_al_1998.pdf  olsen_2017.pdf
+fig_11_07.csv             habitat_01.jpg            pdfs/
+fig_11_08.csv             habitat_02.jpg            readme for fig files.txt
+fig_11_09.csv             habitat_03.jpg            van_leeuwen_2002.pdf
 ~~~
 {: .output}
 
@@ -256,8 +263,8 @@ $ ls -F
 {: .language-bash}
 
 ~~~
-amino-acids.txt   elements/     pdb/	        salmon.txt
-animals.txt       morse.txt     planets.txt     sunspot.txt
+sample_01.csv  sample_03.csv  sample_05.csv  sample_08.csv  sample_10.csv
+sample_02.csv  sample_04.csv  sample_07.csv  sample_09.csv
 ~~~
 {: .output}
 
@@ -315,8 +322,16 @@ $ ls -F -a
 {: .language-bash}
 
 ~~~
-./   .bash_profile  data/       north-pacific-gyre/  pizza.cfg  thesis/
-../  creatures/     molecules/  notes.txt            solar.pdf  writing/
+./                        fig_11_09.csv             humphrey_keeble_1976.pdf
+../                       fig_11_10.csv             lab_notes/
+data/                     finches_01.jpg            lab_notes.zip
+fig_11_01.csv             finches_02.jpg            loewenberg_1965.pdf
+fig_11_02.csv             finches_03.jpg            oldroyd_1984.pdf
+fig_11_03.csv             finches_04.jpg            olsen_2017.pdf
+fig_11_04.csv             greenleaf_et_al_1998.pdf  pdfs/
+fig_11_05.csv             habitat_01.jpg            readme for fig files.txt
+fig_11_07.csv             habitat_02.jpg            van_leeuwen_2002.pdf
+fig_11_08.csv             habitat_03.jpg
 ~~~
 {: .output}
 
