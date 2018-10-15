@@ -206,3 +206,38 @@ It happens because in the first run of the script the `pdfs` directory is create
 During the second and any subsequent runs of the script, the directory already exists.
 In the future you can learn how to take care of situations like this with conditionals,
 but that is a more advanced technique for another lesson.
+
+> ## Moving Files
+>
+> What command would you add to the script in order to move
+> all the PDF files into the `pdfs` directory?
+>
+> > ## Solution
+>>  We'll want to use the `mv` command and select our files with a wildcard.
+>>
+>> ~~~
+>> mv *.pdf pdfs/
+>> ~~~
+>> {: .language-bash}
+>>
+>> The first argument for the `mv` command selects all the files that end in `.pdf` 
+>> and the second argument is the destination for those files: the `pdfs` directory.
+> {: .solution}
+{: .challenge}
+
+> ## Deleting Files
+>
+> What command would you add to the script in order to delete
+> the `lab_notes` directory?
+>
+> > ## Solution
+>>  We'll want to use the `rm` command with the `-r` flag to remove the directory.
+>>
+>> ~~~
+>> rm -r lab_notes
+>> ~~~
+>> {: .language-bash}
+>>
+>> The `-r` flag indicates that we want to remove files and directories recursively.
+> {: .solution}
+{: .challenge}
