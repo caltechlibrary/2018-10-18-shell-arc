@@ -148,3 +148,61 @@ fig_11_08.csv             habitat_02.jpg            van_leeuwen_2002.pdf
 
 Sure enough,
 our script's output is exactly what we would get if we ran those commands directly.
+
+Let's start making things happen with the script.
+In the script we're going to make a directory that we can move all the PDF files into.
+
+~~~
+$ nano cleanup.sh
+~~~
+{: .language-bash}
+
+Add the following lines:
+
+~~~
+# Make a directory named pdfs.
+mkdir pdfs
+~~~
+{: .source}
+
+WriteOut and Exit from nano.
+
+Now we can run the `cleanup.sh` script to see what it does.
+
+~~~
+$ bash cleanup.sh
+~~~
+{: .language-bash}
+
+The output should be the same as before, but if we run the `ls` command we can see a new directory was created.
+
+What happens if we run the script again?
+
+~~~
+$ bash cleanup.sh
+~~~
+{: .language-bash}
+
+~~~
+/Users/tkeswick/Desktop/data-shell
+cleanup.sh                fig_11_10.csv             lab_notes/
+data/                     finches_01.jpg            lab_notes.zip
+fig_11_01.csv             finches_02.jpg            loewenberg_1965.pdf
+fig_11_02.csv             finches_03.jpg            oldroyd_1984.pdf
+fig_11_03.csv             finches_04.jpg            olsen_2017.pdf
+fig_11_04.csv             greenleaf_et_al_1998.pdf  pdfs/
+fig_11_05.csv             habitat_01.jpg            readme for fig files.txt
+fig_11_07.csv             habitat_02.jpg            van_leeuwen_2002.pdf
+fig_11_08.csv             habitat_03.jpg
+fig_11_09.csv             humphrey_keeble_1976.pdf
+mkdir: pdfs: File exists
+~~~
+{: .output}
+
+You'll notice the last line of the output contains an notice: `mkdir: pdfs: File exists`
+
+There is no need to worry about this notice; it is not an error, just something to take note of.
+It happens because in the first run of the script the `pdfs` directory is created.
+During the second and any subsequent runs of the script, the directory already exists.
+In the future you can learn how to take care of situations like this with conditionals,
+but that is a more advanced technique for another lesson.
