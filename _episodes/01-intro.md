@@ -175,3 +175,7 @@ to tackle a wide range of scientific questions and computational challenges.
 ## A Disasterous Downloads Directory: Starting Point
 
 Nelle Nemo, a typical computer user,
+has a `Downloads` directory that is full of all kinds of files that are disorganized.
+Her goal is to create a script that she can periodically run that will automatically
+clean up the directory according to some rules that she devises.
+Her sample directory is what you have downloaded and extracted as `data-shell` on your Desktop.
