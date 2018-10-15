@@ -199,7 +199,7 @@ mkdir: pdfs: File exists
 ~~~
 {: .output}
 
-You'll notice the last line of the output contains an notice: `mkdir: pdfs: File exists`
+You'll notice the last line of the output contains a notice: `mkdir: pdfs: File exists`
 
 There is no need to worry about this notice; it is not an error, just something to take note of.
 It happens because in the first run of the script the `pdfs` directory is created.
@@ -241,3 +241,5 @@ but that is a more advanced technique for another lesson.
 >> The `-r` flag indicates that we want to remove files and directories recursively.
 > {: .solution}
 {: .challenge}
+
+After adding the lines from the exercises into your script, you have the beginnings of something that you can take in any direction you would like.
