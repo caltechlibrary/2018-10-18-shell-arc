@@ -184,7 +184,7 @@ $ bash cleanup.sh
 {: .language-bash}
 
 ~~~
-/Users/tkeswick/Desktop/data-shell
+/Users/nelle/Desktop/data-shell
 cleanup.sh                fig_11_10.csv             lab_notes/
 data/                     finches_01.jpg            lab_notes.zip
 fig_11_01.csv             finches_02.jpg            loewenberg_1965.pdf
