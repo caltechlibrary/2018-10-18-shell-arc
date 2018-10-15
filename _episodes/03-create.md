@@ -37,7 +37,15 @@ $ ls -F
 {: .language-bash}
 
 ~~~
-creatures/  data/  molecules/  north-pacific-gyre/  notes.txt  pizza.cfg  solar.pdf  writing/
+data/                     fig_11_10.csv             humphrey_keeble_1976.pdf
+fig_11_01.csv             finches_01.jpg            lab_notes/
+fig_11_02.csv             finches_02.jpg            lab_notes.zip
+fig_11_03.csv             finches_03.jpg            loewenberg_1965.pdf
+fig_11_04.csv             finches_04.jpg            oldroyd_1984.pdf
+fig_11_05.csv             greenleaf_et_al_1998.pdf  olsen_2017.pdf
+fig_11_07.csv             habitat_01.jpg            readme for fig files.txt
+fig_11_08.csv             habitat_02.jpg            van_leeuwen_2002.pdf
+fig_11_09.csv             habitat_03.jpg
 ~~~
 {: .output}
 
@@ -61,7 +69,15 @@ $ ls -F
 {: .language-bash}
 
 ~~~
-creatures/  data/  molecules/  north-pacific-gyre/  notes.txt  pizza.cfg  solar.pdf  thesis/  writing/
+data/                     fig_11_10.csv             humphrey_keeble_1976.pdf
+fig_11_01.csv             finches_01.jpg            lab_notes/
+fig_11_02.csv             finches_02.jpg            lab_notes.zip
+fig_11_03.csv             finches_03.jpg            loewenberg_1965.pdf
+fig_11_04.csv             finches_04.jpg            oldroyd_1984.pdf
+fig_11_05.csv             greenleaf_et_al_1998.pdf  olsen_2017.pdf
+fig_11_07.csv             habitat_01.jpg            readme for fig files.txt
+fig_11_08.csv             habitat_02.jpg            thesis/
+fig_11_09.csv             habitat_03.jpg            van_leeuwen_2002.pdf
 ~~~
 {: .output}
 
@@ -109,11 +125,11 @@ $ ls -F thesis
 {: .language-bash}
 
 Let's change our working directory to `thesis` using `cd`,
-then run a text editor called Nano to create a file called `draft.txt`:
+then use the `touch` command to create a file called `draft.txt`:
 
 ~~~
 $ cd thesis
-$ nano draft.txt
+$ touch draft.txt
 ~~~
 {: .language-bash}
 
@@ -161,7 +177,7 @@ $ pwd
 {: .output}
 
 ~~~
-$ nano draft.txt
+$ touch draft.txt
 $ ls
 ~~~
 {: .language-bash}
@@ -235,8 +251,8 @@ $ rm -r thesis
 {: .callout}
 
 Let's create that directory and file one more time.
-(Note that this time we're running `nano` with the path `thesis/draft.txt`,
-rather than going into the `thesis` directory and running `nano` on `draft.txt` there.)
+(Note that this time we're running `touch` with the path `thesis/draft.txt`,
+rather than going into the `thesis` directory and running `touch` on `draft.txt` there.)
 
 ~~~
 $ pwd
@@ -250,7 +266,7 @@ $ pwd
 
 ~~~
 $ mkdir thesis
-$ nano thesis/draft.txt
+$ touch thesis/draft.txt
 $ ls thesis
 ~~~
 {: .language-bash}
