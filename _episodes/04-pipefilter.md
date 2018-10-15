@@ -1,5 +1,5 @@
 ---
-title: "Pipes and Filters"
+title: "Pipes and Filters — SKIPPING"
 teaching: 25
 exercises: 10
 questions:
